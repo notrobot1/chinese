@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Китайские фразы HSK1</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      transition: 0.3s ease;
+    }
+
+    .hanzi {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .pinyin {
+      font-size: 20px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .translation {
+      display: none;
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .show-btn {
+      background: #ffa726;
+      color: white;
+    }
+
+    .next-btn {
+      background: #42a5f5;
+      color: white;
+    }
+
+    .progress-container {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #66bb6a;
+      width: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .finished {
+      text-align: center;
+      font-size: 24px;
+      color: #888;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="hanzi" id="hanzi">加载中...</div>
+    <div class="pinyin" id="pinyin"></div>
+    <div class="translation" id="translation"></div>
+    <div class="buttons">
+      <button class="show-btn" onclick="showTranslation()">Показать перевод</button>
+      <button class="next-btn" onclick="nextPhrase()">Следующая</button>
+    </div>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+  </div>
+
+  <div class="finished" id="finished" style="display: none;">
+    Все фразы просмотрены!
+  </div>
+
+  <script>
+    let phrases = [];
+    let usedPhrases = [];
+
+    async function fetchPhrases() {
+      try {
+        const res = await fetch("https://notrobot1.github.io/chinese/words/hsk1/phrases.json");
+        const data = await res.json();
+        phrases = [...data];
+        nextPhrase();
+        updateProgress();
+      } catch (err) {
+        document.getElementById("hanzi").innerText = "Ошибка загрузки данных";
+        console.error("Ошибка загрузки JSON:", err);
+      }
+    }
+
+    function showTranslation() {
+      document.getElementById("translation").style.display = "block";
+    }
+
+    function nextPhrase() {
+      if (phrases.length === 0) {
+        document.getElementById("card").style.display = "none";
+        document.getElementById("finished").style.display = "block";
+        updateProgress();
+        return;
+      }
+
+      const index = Math.floor(Math.random() * phrases.length);
+      const phrase = phrases.splice(index, 1)[0];
+      usedPhrases.push(phrase);
+
+      document.getElementById("hanzi").innerText = phrase.hanzi;
+      document.getElementById("pinyin").innerText = phrase.pinyin;
+      document.getElementById("translation").innerText = phrase.ru;
+      document.getElementById("translation").style.display = "none";
+
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = phrases.length + usedPhrases.length;
+      const percent = total === 0 ? 0 : (phrases.length / total) * 100;
+      document.getElementById("progress").style.width = percent + "%";
+    }
+
+    fetchPhrases();
+  </script>
+</body>
+</html>
