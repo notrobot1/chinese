@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>HSK2 Матчинг</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .fade-in {
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    .selected {
+      border: 0.5px solid #3b82f6;
+      background-color: #bfdbfe;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div id="game" class="w-full max-w-4xl bg-white p-6 rounded-2xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-4 text-center">HSK2: Соедини перевод и иероглиф</h1>
+    <div id="game-board" class="grid grid-cols-2 gap-4">
+      <div id="rus" class="flex flex-col gap-2"></div>
+      <div id="hanzi" class="flex flex-col gap-2"></div>
+    </div>
+    <div id="result" class="mt-6 text-center text-xl font-semibold hidden"></div>
+    <div id="controls" class="mt-4 text-center hidden">
+      <button id="restart" class="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">Играть ещё</button>
+    </div>
+  </div>
+
+  <script>
+    let words = [];
+    let remainingWords = [];
+    let currentWords = [];
+    let currentIndex = 0;
+    let startTime;
+    let selectedRu = null;
+    let audioMap = new Map();
+
+    function shuffle(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function renderPair() {
+      const rusCol = document.getElementById("rus");
+      const hanziCol = document.getElementById("hanzi");
+
+      rusCol.innerHTML = "";
+      hanziCol.innerHTML = "";
+      audioMap.clear();
+
+      const ruButtons = currentWords.map(w => {
+        const btn = document.createElement("button");
+        btn.textContent = w.ru;
+        btn.className = "px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300";
+        btn.onclick = () => selectRu(w, btn);
+        return btn;
+      });
+
+      const hanziButtons = currentWords.map(w => {
+        const btn = document.createElement("button");
+        btn.textContent = w.hanzi;
+        btn.className = "px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300";
+        btn.onclick = () => selectHanzi(w, btn);
+
+        if (w.audio) {
+          const audio = new Audio(w.audio);
+          audio.load();
+          audioMap.set(w.hanzi, audio);
+        }
+        return btn;
+      });
+
+      shuffle(ruButtons).forEach(btn => rusCol.appendChild(btn));
+      shuffle(hanziButtons).forEach(btn => hanziCol.appendChild(btn));
+    }
+
+    function selectRu(word, btn) {
+      if (selectedRu && selectedRu.btn) {
+        selectedRu.btn.classList.remove("selected");
+      }
+      selectedRu = { word, btn };
+      btn.classList.add("selected");
+    }
+
+    function selectHanzi(word, btn) {
+      if (!selectedRu) return;
+
+      if (selectedRu.word.hanzi === word.hanzi) {
+        const audio = audioMap.get(word.hanzi);
+        if (audio) audio.play();
+
+        selectedRu.btn.disabled = true;
+        btn.disabled = true;
+        selectedRu.btn.classList.add("opacity-50");
+        selectedRu.btn.classList.remove("selected");
+        btn.classList.remove("selected");
+        btn.classList.add("opacity-50");
+
+        currentWords = currentWords.filter(w => w.hanzi !== word.hanzi);
+
+        if (currentWords.length === 0) {
+          if (remainingWords.length === 0) {
+            finishGame();
+          } else {
+            loadNextRound();
+          }
+        }
+      } else {
+        selectedRu.btn.classList.remove("selected");
+      }
+
+      selectedRu = null;
+    }
+
+    function loadNextRound() {
+      const nextCount = Math.min(5, remainingWords.length);
+      currentWords = shuffle(remainingWords).slice(0, nextCount);
+      remainingWords = remainingWords.filter(w => !currentWords.includes(w));
+      renderPair();
+    }
+
+    function finishGame() {
+      const endTime = Date.now();
+      const timeTaken = ((endTime - startTime) / 1000).toFixed(1);
+      document.getElementById("game-board").classList.add("hidden");
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("controls").classList.remove("hidden");
+      document.getElementById("result").textContent = `Готово! Вы справились за ${timeTaken} секунд.`;
+    }
+
+    function startGame() {
+      remainingWords = shuffle([...words]);
+      startTime = Date.now();
+      document.getElementById("game-board").classList.remove("hidden");
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("controls").classList.add("hidden");
+      loadNextRound();
+    }
+
+    document.getElementById("restart").onclick = startGame;
+
+    // Загрузка данных с внешнего URL
+    fetch('https://notrobot1.github.io/chinese/words/hsk2/words.json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Ошибка загрузки: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        words = data;
+        startGame();
+      })
+      .catch(error => {
+        console.error('Не удалось загрузить данные:', error);
+        document.getElementById("game").innerHTML = `<p class="text-red-500 text-center">Ошибка загрузки слов. Попробуйте позже.</p>`;
+      });
+  </script>
+</body>
+</html>
