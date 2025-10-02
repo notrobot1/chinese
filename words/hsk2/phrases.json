@@ -1,3 +1,8 @@
 [
-{"hanzi":"我欢迎你们","pinyin":"Wǒ huānyíng nǐmen","ru":"Я вас приветствую"},
+  {"hanzi":"我欢迎你们","pinyin":"Wǒ huānyíng nǐmen","ru":"Я вас приветствую"},
+  {"hanzi":"我介绍一下，这是我妈妈","pinyin":"Wǒ jièshào yíxià, zhè shì wǒ māma","ru":"Я представлю: это моя мама"},
+  {"hanzi":"老师介绍我的朋友","pinyin":"Lǎoshī jièshào wǒ de péngyou","ru":"Учитель представляет моего друга"},
+  {"hanzi":"他介绍一个中国饭馆","pinyin":"Tā jièshào yí gè Zhōngguó fànguǎn","ru":"Он рекомендует китайский ресторан"},
+  {"hanzi":"我们介绍北京","pinyin":"Wǒmen jièshào Běijīng","ru":"Мы рассказываем (делаем представление) про Пекин"},
+  {"hanzi":"请介绍一下你","pinyin":"Qǐng jièshào yíxià nǐ","ru":"Пожалуйста, расскажи немного о себе"},
 ]
