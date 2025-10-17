@@ -46,26 +46,30 @@
     let words = [];
     let remainingWords = [];
     let currentWords = [];
-    let currentIndex = 0;
     let startTime;
     let selectedRu = null;
     let audioMap = new Map();
 
-
+    const toggle = document.getElementById("toggle-pinyin");
 
     // === Сохраняем и восстанавливаем состояние галочки ===
-    const toggle = document.getElementById("toggle-pinyin");
-    
-    // Загружаем состояние при открытии страницы
     const saved = localStorage.getItem("showPinyin");
     if (saved !== null) {
       toggle.checked = saved === "true";
     }
-    
-    // При изменении сохраняем состояние
+
+    // При изменении — сохраняем и обновляем текст на карточках (без перерисовки)
     toggle.addEventListener("change", () => {
-      localStorage.setItem("showPinyin", toggle.checked);
-      renderPair();
+      const showPinyin = toggle.checked;
+      localStorage.setItem("showPinyin", showPinyin);
+
+      // Меняем текст только у существующих карточек
+      const hanziButtons = document.querySelectorAll("#hanzi button");
+      hanziButtons.forEach((btn, i) => {
+        const w = currentWords[i];
+        if (!w) return;
+        btn.textContent = showPinyin ? `${w.hanzi} (${w.pinyin})` : w.hanzi;
+      });
     });
 
     function shuffle(arr) {
@@ -75,7 +79,7 @@
     function renderPair() {
       const rusCol = document.getElementById("rus");
       const hanziCol = document.getElementById("hanzi");
-      const showPinyin = document.getElementById("toggle-pinyin").checked;
+      const showPinyin = toggle.checked;
 
       rusCol.innerHTML = "";
       hanziCol.innerHTML = "";
@@ -91,10 +95,7 @@
 
       const hanziButtons = currentWords.map(w => {
         const btn = document.createElement("button");
-
-        // Показываем hanzi с пиньинем, если включено
         btn.textContent = showPinyin ? `${w.hanzi} (${w.pinyin})` : w.hanzi;
-
         btn.className = "px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300";
         btn.onclick = () => selectHanzi(w, btn);
 
@@ -175,11 +176,6 @@
     }
 
     document.getElementById("restart").onclick = startGame;
-
-    // Обработчик для галочки "Показывать пиньинь"
-    //document.getElementById("toggle-pinyin").addEventListener("change", () => {
-    //  renderPair();
-    //});
 
     // Загрузка данных с внешнего URL
     fetch('https://notrobot1.github.io/chinese/words/hsk2/words.json')
