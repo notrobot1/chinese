@@ -51,6 +51,23 @@
     let selectedRu = null;
     let audioMap = new Map();
 
+
+
+    // === Сохраняем и восстанавливаем состояние галочки ===
+    const toggle = document.getElementById("toggle-pinyin");
+    
+    // Загружаем состояние при открытии страницы
+    const saved = localStorage.getItem("showPinyin");
+    if (saved !== null) {
+      toggle.checked = saved === "true";
+    }
+    
+    // При изменении сохраняем состояние
+    toggle.addEventListener("change", () => {
+      localStorage.setItem("showPinyin", toggle.checked);
+      renderPair();
+    });
+
     function shuffle(arr) {
       return arr.sort(() => Math.random() - 0.5);
     }
