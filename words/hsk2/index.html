@@ -5,39 +5,93 @@
   <title>HSK2 Матчинг</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden; /* убираем скроллы */
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3f4f6;
+    }
+
+    #game {
+      width: 100%;
+      height: 100%;
+      max-width: 800px;
+      max-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
     .fade-out {
       opacity: 0;
       transition: opacity 0.5s ease;
     }
+
     .fade-in {
       opacity: 1;
       transition: opacity 0.5s ease;
     }
+
     .selected {
-      border: 0.5px solid #3b82f6;
+      border: 1px solid #3b82f6;
       background-color: #bfdbfe;
+    }
+
+    button {
+      touch-action: manipulation; /* предотвращает задержку отклика на мобилках */
+    }
+
+    /* 📱 Адаптив под мобильные устройства */
+    @media (max-width: 768px) {
+      #game-board {
+        grid-template-columns: 1fr; /* кнопки в одну колонку */
+        gap: 1rem;
+      }
+
+      #rus, #hanzi {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      button {
+        font-size: 1.25rem;
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div id="game" class="w-full max-w-4xl bg-white p-6 rounded-2xl shadow-lg">
+<body>
+  <div id="game" class="bg-white rounded-none shadow-lg">
     <h1 class="text-2xl font-bold mb-2 text-center">HSK2: Соедини перевод и иероглиф</h1>
 
-    <!-- Галочка "Показывать пиньинь" -->
-    <div class="mb-4 text-center">
+    <div class="mb-2 text-center">
       <label class="inline-flex items-center gap-2 text-sm font-medium">
         <input type="checkbox" id="toggle-pinyin" class="accent-blue-500" checked>
         Показывать пиньинь
       </label>
     </div>
 
-    <div id="game-board" class="grid grid-cols-2 gap-4">
-      <div id="rus" class="flex flex-col gap-2"></div>
-      <div id="hanzi" class="flex flex-col gap-2"></div>
+    <div id="game-board" class="grid grid-cols-2 gap-4 flex-grow overflow-hidden">
+      <div id="rus" class="flex flex-col gap-2 overflow-auto"></div>
+      <div id="hanzi" class="flex flex-col gap-2 overflow-auto"></div>
     </div>
 
-    <div id="result" class="mt-6 text-center text-xl font-semibold hidden"></div>
-    <div id="controls" class="mt-4 text-center hidden">
+    <div id="result" class="mt-4 text-center text-xl font-semibold hidden"></div>
+    <div id="controls" class="mt-2 text-center hidden">
       <button id="restart" class="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">Играть ещё</button>
     </div>
   </div>
