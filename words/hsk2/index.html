@@ -23,22 +23,14 @@
       height: 100%;
       max-width: 800px;
       max-height: 100vh;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: center;
       padding: 1rem;
       box-sizing: border-box;
-    }
-
-    .fade-out {
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-
-    .fade-in {
-      opacity: 1;
-      transition: opacity 0.5s ease;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     .selected {
@@ -47,13 +39,13 @@
     }
 
     button {
-      touch-action: manipulation; /* предотвращает задержку отклика на мобилках */
+      touch-action: manipulation; /* убирает задержку на мобилках */
     }
 
-    /* 📱 Адаптив под мобильные устройства */
+    /* Адаптив под мобильные устройства */
     @media (max-width: 768px) {
       #game-board {
-        grid-template-columns: 1fr; /* кнопки в одну колонку */
+        grid-template-columns: 1fr; /* колонки в одну колонку */
         gap: 1rem;
       }
 
@@ -75,9 +67,10 @@
   </style>
 </head>
 <body>
-  <div id="game" class="bg-white rounded-none shadow-lg">
+  <div id="game">
     <h1 class="text-2xl font-bold mb-2 text-center">HSK2: Соедини перевод и иероглиф</h1>
 
+    <!-- Галочка "Показывать пиньинь" -->
     <div class="mb-2 text-center">
       <label class="inline-flex items-center gap-2 text-sm font-medium">
         <input type="checkbox" id="toggle-pinyin" class="accent-blue-500" checked>
@@ -105,26 +98,22 @@
     let audioMap = new Map();
 
     const toggle = document.getElementById("toggle-pinyin");
-
-    // === Сохраняем и восстанавливаем состояние галочки ===
     const saved = localStorage.getItem("showPinyin");
-    if (saved !== null) {
-      toggle.checked = saved === "true";
-    }
+    if (saved !== null) toggle.checked = saved === "true";
 
-    // При изменении — сохраняем и обновляем текст на карточках (без перерисовки)
     toggle.addEventListener("change", () => {
-      const showPinyin = toggle.checked;
-      localStorage.setItem("showPinyin", showPinyin);
-
-      // Меняем текст только у существующих карточек
-      const hanziButtons = document.querySelectorAll("#hanzi button");
-      hanziButtons.forEach((btn, i) => {
-        const w = currentWords[i];
-        if (!w) return;
-        btn.textContent = showPinyin ? `${w.hanzi} (${w.pinyin})` : w.hanzi;
-      });
+      localStorage.setItem("showPinyin", toggle.checked);
+      updatePinyinVisibility();
     });
+
+    function updatePinyinVisibility() {
+      const showPinyin = toggle.checked;
+      document.querySelectorAll("#hanzi button").forEach(btn => {
+        const hanzi = btn.dataset.hanzi;
+        const pinyin = btn.dataset.pinyin;
+        btn.textContent = showPinyin ? `${hanzi} (${pinyin})` : hanzi;
+      });
+    }
 
     function shuffle(arr) {
       return arr.sort(() => Math.random() - 0.5);
@@ -150,6 +139,8 @@
       const hanziButtons = currentWords.map(w => {
         const btn = document.createElement("button");
         btn.textContent = showPinyin ? `${w.hanzi} (${w.pinyin})` : w.hanzi;
+        btn.dataset.hanzi = w.hanzi;
+        btn.dataset.pinyin = w.pinyin;
         btn.className = "px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300";
         btn.onclick = () => selectHanzi(w, btn);
 
@@ -158,7 +149,6 @@
           audio.load();
           audioMap.set(w.hanzi, audio);
         }
-
         return btn;
       });
 
@@ -167,9 +157,7 @@
     }
 
     function selectRu(word, btn) {
-      if (selectedRu && selectedRu.btn) {
-        selectedRu.btn.classList.remove("selected");
-      }
+      if (selectedRu && selectedRu.btn) selectedRu.btn.classList.remove("selected");
       selectedRu = { word, btn };
       btn.classList.add("selected");
     }
@@ -234,9 +222,7 @@
     // Загрузка данных с внешнего URL
     fetch('https://notrobot1.github.io/chinese/words/hsk2/words.json')
       .then(response => {
-        if (!response.ok) {
-          throw new Error(`Ошибка загрузки: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
         return response.json();
       })
       .then(data => {
