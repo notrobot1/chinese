@@ -5,30 +5,93 @@
   <title>HSK1 Матчинг</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .fade-out {
-      opacity: 0;
-      transition: opacity 0.5s ease;
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden; /* убираем скроллы */
     }
-    .fade-in {
-      opacity: 1;
-      transition: opacity 0.5s ease;
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3f4f6;
     }
+
+    #game {
+      width: 100%;
+      height: 100%;
+      max-width: 800px;
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1rem;
+      box-sizing: border-box;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
     .selected {
-      border: 0.5px solid #3b82f6;
+      border: 1px solid #3b82f6;
       background-color: #bfdbfe;
+    }
+
+    button {
+      touch-action: manipulation; /* убирает задержку на мобилках */
+    }
+
+    /* Адаптив под мобильные устройства */
+    @media (max-width: 768px) {
+      #game-board {
+        grid-template-columns: 1fr; /* колонки в одну колонку */
+        gap: 1rem;
+      }
+
+      #rus, #hanzi {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      button {
+        font-size: 1.25rem;
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div id="game" class="w-full max-w-4xl bg-white p-6 rounded-2xl shadow-lg">
-    <h1 class="text-2xl font-bold mb-4 text-center">HSK1: Соедини перевод и иероглиф</h1>
-    <div id="game-board" class="grid grid-cols-2 gap-4">
-      <div id="rus" class="flex flex-col gap-2"></div>
-      <div id="hanzi" class="flex flex-col gap-2"></div>
+<body>
+  <div id="game">
+    <h1 class="text-2xl font-bold mb-2 text-center">HSK1: Соедини перевод и иероглиф</h1>
+
+    <!-- Галочка "Показывать пиньинь" -->
+    <div class="mb-2 text-center">
+      <label class="inline-flex items-center gap-2 text-sm font-medium">
+        <input type="checkbox" id="toggle-pinyin" class="accent-blue-500" checked>
+        Показывать пиньинь
+      </label>
     </div>
-    <div id="result" class="mt-6 text-center text-xl font-semibold hidden"></div>
-    <div id="controls" class="mt-4 text-center hidden">
+
+    <div id="game-board" class="grid grid-cols-2 gap-4 flex-grow overflow-hidden">
+      <div id="rus" class="flex flex-col gap-2 overflow-auto"></div>
+      <div id="hanzi" class="flex flex-col gap-2 overflow-auto"></div>
+    </div>
+
+    <div id="result" class="mt-4 text-center text-xl font-semibold hidden"></div>
+    <div id="controls" class="mt-2 text-center hidden">
       <button id="restart" class="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">Играть ещё</button>
+    </div>
+
+    <div id="home-button" class="mt-4 text-center">
+      <a href="/chinese" class="inline-block px-4 py-2 bg-gray-300 rounded-xl hover:bg-gray-400 text-gray-800 font-medium">
+        Главная
+      </a>
     </div>
   </div>
 
@@ -36,10 +99,27 @@
     let words = [];
     let remainingWords = [];
     let currentWords = [];
-    let currentIndex = 0;
     let startTime;
     let selectedRu = null;
     let audioMap = new Map();
+
+    const toggle = document.getElementById("toggle-pinyin");
+    const saved = localStorage.getItem("showPinyin");
+    if (saved !== null) toggle.checked = saved === "true";
+
+    toggle.addEventListener("change", () => {
+      localStorage.setItem("showPinyin", toggle.checked);
+      updatePinyinVisibility();
+    });
+
+    function updatePinyinVisibility() {
+      const showPinyin = toggle.checked;
+      document.querySelectorAll("#hanzi button").forEach(btn => {
+        const hanzi = btn.dataset.hanzi;
+        const pinyin = btn.dataset.pinyin;
+        btn.textContent = showPinyin ? `${hanzi} (${pinyin})` : hanzi;
+      });
+    }
 
     function shuffle(arr) {
       return arr.sort(() => Math.random() - 0.5);
@@ -48,6 +128,7 @@
     function renderPair() {
       const rusCol = document.getElementById("rus");
       const hanziCol = document.getElementById("hanzi");
+      const showPinyin = toggle.checked;
 
       rusCol.innerHTML = "";
       hanziCol.innerHTML = "";
@@ -63,7 +144,9 @@
 
       const hanziButtons = currentWords.map(w => {
         const btn = document.createElement("button");
-        btn.textContent = w.hanzi;
+        btn.textContent = showPinyin ? `${w.hanzi} (${w.pinyin})` : w.hanzi;
+        btn.dataset.hanzi = w.hanzi;
+        btn.dataset.pinyin = w.pinyin;
         btn.className = "px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300";
         btn.onclick = () => selectHanzi(w, btn);
 
@@ -80,9 +163,7 @@
     }
 
     function selectRu(word, btn) {
-      if (selectedRu && selectedRu.btn) {
-        selectedRu.btn.classList.remove("selected");
-      }
+      if (selectedRu && selectedRu.btn) selectedRu.btn.classList.remove("selected");
       selectedRu = { word, btn };
       btn.classList.add("selected");
     }
@@ -147,9 +228,7 @@
     // Загрузка данных с внешнего URL
     fetch('https://notrobot1.github.io/chinese/words/hsk1/words.json')
       .then(response => {
-        if (!response.ok) {
-          throw new Error(`Ошибка загрузки: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
         return response.json();
       })
       .then(data => {
