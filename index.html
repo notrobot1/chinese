@@ -2,315 +2,119 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>HSK1 Матчинг</title>
+  <title>Изучение китайского языка онлайн — HSK тренировки</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 🔍 SEO -->
+  <meta name="description" content="Изучай китайский язык онлайн с помощью интерактивных упражнений HSK1 и HSK2. Матчинг слов, карточки, викторины и аудио для запоминания иероглифов.">
+  <meta name="keywords" content="HSK, китайский язык, иероглифы, пиньинь, тренировка слов, изучение китайского, флешкарты, HSK1, HSK2, китайский онлайн">
+  <meta name="author" content="NotRobot">
+
+  <!-- 📱 Мобильная оптимизация -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- 🌐 Open Graph (для красивого предпросмотра в соцсетях) -->
+  <meta property="og:title" content="Изучай китайский язык онлайн — HSK тренировки">
+  <meta property="og:description" content="Интерактивные упражнения для HSK1 и HSK2: соединяй перевод и иероглиф, слушай произношение, тренируй память.">
+  <meta property="og:image" content="https://notrobot1.github.io/chinese/assets/preview.jpg">
+  <meta property="og:url" content="https://notrobot1.github.io/chinese/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+
+  <!-- 🐦 Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HSK тренировки — изучай китайский онлайн">
+  <meta name="twitter:description" content="Карточки, викторины и матчинг слов для HSK1 и HSK2.">
+  <meta name="twitter:image" content="https://notrobot1.github.io/chinese/assets/preview.jpg">
+
+  <!-- 🧩 Favicon -->
+  <link rel="icon" href="https://notrobot1.github.io/chinese/assets/favicon.png" type="image/png">
+
+  <!-- 🧠 Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    .fade-out {
-      opacity: 0;
-      transition: opacity 0.5s ease;
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
     }
-    .fade-in {
-      opacity: 1;
-      transition: opacity 0.5s ease;
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3f4f6;
     }
-    .selected {
-      border: 0.5px solid #3b82f6; /* синяя рамка */
-      background-color: #bfdbfe; /* светло-голубой фон */
+
+    #home {
+      width: 100%;
+      max-width: 800px;
+      height: 100%;
+      max-height: 100vh;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.5rem;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      #home {
+        border-radius: 0;
+      }
     }
   </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div id="game" class="w-full max-w-4xl bg-white p-6 rounded-2xl shadow-lg">
-    <h1 class="text-2xl font-bold mb-4 text-center">HSK1: Соедини перевод и иероглиф</h1>
-    <div id="game-board" class="grid grid-cols-2 gap-4">
-      <div id="rus" class="flex flex-col gap-2"></div>
-      <div id="hanzi" class="flex flex-col gap-2"></div>
+<body>
+  <div id="home">
+    <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Изучай китайский с удовольствием 🇨🇳</h1>
+
+    <div class="flex flex-col gap-4 overflow-auto">
+
+
+      <a href="words/hsk1/" 
+         class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+        <h2 class="text-lg font-semibold text-gray-800">HSK1 — Матчинг слов</h2>
+        <p class="text-sm text-gray-600">Начальный уровень. Простые слова и выражения для старта.</p>
+      </a>
+
+      <a href="audio/hsk1/" 
+          class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+        <h2 class="text-lg font-semibold text-gray-800">HSK1 — Аудирование</h2>
+        <p class="text-sm text-gray-600">Сопоставьте китайские иероглифы с их переводом на слух — HSK1</p>
+      </a>
+      
+      <a href="phrases/hsk/1" 
+          class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+        <h2 class="text-lg font-semibold text-gray-800">HSK1 — Тренировка предложений</h2>
+        <p class="text-sm text-gray-600">Предложения, которые можно составить, используя слова из HSK1.</p>
+      </a>
+
+
+      <a href="words/hsk2/" 
+          class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+        <h2 class="text-lg font-semibold text-gray-800">HSK2 — Матчинг слов</h2>
+        <p class="text-sm text-gray-600">Соедини перевод и иероглиф. Отлично подходит для тренировки запоминания.</p>
+      </a>
+
     </div>
-    <div id="result" class="mt-6 text-center text-xl font-semibold hidden"></div>
-    <div id="controls" class="mt-4 text-center hidden">
-      <button id="restart" class="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">Играть ещё</button>
+
+    <div class="mt-6 text-center">
+      <p class="text-gray-500 text-sm">
+        © <span id="currentYear"></span> Chinese Trainer by NotRobot
+      </p>
     </div>
   </div>
 
   <script>
-    const words = [
-    { hanzi: "爱", pinyin: "ài", ru: "любить", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w870/870A_cm_f_l_6_3.mp3" },
-  { hanzi: "八", pinyin: "bā", ru: "восемь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w134/134A_cm_f_l_6_3.mp3" },
-  { hanzi: "爸爸", pinyin: "bàba", ru: "папа", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w93/93A_cm_f_l_6_3.mp3" },
-  { hanzi: "杯子", pinyin: "bēizi", ru: "стакан, кружка", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w190/17190A_cm_f_l_6_3.mp3" },
-  { hanzi: "北京", pinyin: "Běijīng", ru: "Пекин", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w424/2424A_cm_f_l_u30_3.mp3" },
-  { hanzi: "本", pinyin: "běn", ru: "сч. слово для книг", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w329/3329A_cm_f_l_6_3.mp3" },
-  { hanzi: "不", pinyin: "bù", ru: "не", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w302/2302A_cm_f_l_6_3.mp3" },
-  { hanzi: "菜", pinyin: "cài", ru: "овощи, блюдо", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w20/20A_cm_f_l_o12_4.mp3" },
-  { hanzi: "茶", pinyin: "chá", ru: "чай", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w78/78A_cm_f_l_6_3.mp3" },
-  { hanzi: "吃", pinyin: "chī", ru: "есть", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w411/411A_cm_f_l_6_3.mp3" },
-  { hanzi: "出租车", pinyin: "chūzūchē", ru: "такси", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w118/118A_cm_f_l_u14_3.mp3" },
-  { hanzi: "打电话", pinyin: "dǎ diànhuà", ru: "звонить по телефону", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w491/4491A_cm_f_l_p167233_3.mp3" },
-  { hanzi: "大", pinyin: "dà", ru: "большой", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w825/19825A_cm_f_l_6_3.mp3" },
-  { hanzi: "的", pinyin: "de", ru: "суффикс принадлежности", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w6/7006A_cm_f_l_6_3.mp3" },
-  { hanzi: "点", pinyin: "diǎn", ru: "час; немного", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w432/432A_cm_f_l_6_3.mp3" },
-  { hanzi: "电脑", pinyin: "diànnǎo", ru: "компьютер", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w620/3620A_cm_f_l_u30_3.mp3" },
-  { hanzi: "电视", pinyin: "diànshì", ru: "телевизор", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w731/3731A_cm_f_l_p167233_3.mp3" },
-  { hanzi: "电影", pinyin: "diànyǐng", ru: "фильм", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w583/3583A_cm_f_l_p294826_3.mp3" },
-  { hanzi: "东西", pinyin: "dōngxi", ru: "вещь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w629/3629A_cm_f_l_6_3.mp3" },
-  { hanzi: "都", pinyin: "dōu", ru: "все", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w779/2779A_cm_f_l_6_3.mp3" },
-  { hanzi: "读", pinyin: "dú", ru: "читать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w788/2788A_cm_f_l_6_3.mp3" },
-  { hanzi: "对不起", pinyin: "duìbuqǐ", ru: "извините", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w53/53A_cm_f_l_o12-12_4.mp3" },
-  { hanzi: "多", pinyin: "duō", ru: "много", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w129/4129A_cm_f_l_6_3.mp3" },
-  { hanzi: "多少", pinyin: "duōshao", ru: "сколько", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w463/3463A_cm_f_l_6_3.mp3" },
-  { hanzi: "儿子", pinyin: "érzi", ru: "сын", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w430/3430A_cm_f_l_6_3.mp3" },
-  { hanzi: "二", pinyin: "èr", ru: "два", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w128/128A_cm_f_l_6_3.mp3" },
-  { hanzi: "饭馆", pinyin: "fànguǎn", ru: "ресторан", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w979/979A_cm_f_l_p67786_3.mp3" },
-  { hanzi: "飞机", pinyin: "fēijī", ru: "самолёт", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w369/3369A_cm_f_l_o14_3.mp3" },
-  { hanzi: "分钟", pinyin: "fēnzhōng", ru: "минута", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w731/8731A_cm_f_l_p48676_3.mp3" },
-  { hanzi: "高兴", pinyin: "gāoxìng", ru: "радостный", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w107/107A_cm_f_l_o30_3.mp3" },
-  { hanzi: "个", pinyin: "gè", ru: "сч. слово (универсальное)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w382/382A_cm_f_l_6_3.mp3" },
-  { hanzi: "工作", pinyin: "gōngzuò", ru: "работать; работа", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w391/391A_cm_f_l_6_3.mp3" },
-  { hanzi: "狗", pinyin: "gǒu", ru: "собака", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w389/389A_cm_f_l_p167233_3.mp3" },
-  { hanzi: "汉语", pinyin: "Hànyǔ", ru: "китайский язык", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w61/61A_cm_f_l_6_3.mp3" },
-  { hanzi: "好", pinyin: "hǎo", ru: "хорошо", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w925/31925A_cm_f_l_6_3.mp3" },
-  { hanzi: "号", pinyin: "hào", ru: "номер, число", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w419/419A_cm_f_l_6_3.mp3" },
-  { hanzi: "喝", pinyin: "hē", ru: "пить", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w765/8765A_cm_f_l_6_3.mp3" },
-  { hanzi: "和", pinyin: "hé", ru: "и, вместе", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w379/379A_cm_f_l_6_3.mp3" },
-  { hanzi: "很", pinyin: "hěn", ru: "очень", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w751/38751A_cm_f_l_6_3.mp3" },
-  { hanzi: "后面", pinyin: "hòumiàn", ru: "сзади", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w444/17444A_cm_f_l_p226630_3.mp3" },
-  { hanzi: "回", pinyin: "huí", ru: "возвращаться", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w374/374A_cm_f_l_o12-32206_4.mp3" },
-  { hanzi: "会", pinyin: "huì", ru: "уметь; мочь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w863/863A_cm_f_l_p226630_3.mp3" },
-  { hanzi: "几", pinyin: "jǐ", ru: "сколько", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w376/376A_cm_f_l_6_3.mp3" },
-  { hanzi: "家", pinyin: "jiā", ru: "дом; семья", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w370/370A_cm_f_l_6_3.mp3" },
-  { hanzi: "叫", pinyin: "jiào", ru: "звать; называться", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w350/350A_cm_f_l_6_3.mp3" },
-  { hanzi: "今天", pinyin: "jīntiān", ru: "сегодня", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w417/417A_cm_f_l_6_3.mp3" },
-  { hanzi: "九", pinyin: "jiǔ", ru: "девять", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w135/135A_cm_f_l_6_3.mp3" },
-  { hanzi: "开", pinyin: "kāi", ru: "открывать; начинать; вести (машину)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w351/3351A_cm_f_l_6_3.mp3" },
-  { hanzi: "看", pinyin: "kàn", ru: "смотреть; читать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w313/7313A_cm_f_l_6_3.mp3" },
-  { hanzi: "看见", pinyin: "kànjiàn", ru: "увидеть", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w52/9052A_cm_f_l_o12_4.mp3" },
-  { hanzi: "块", pinyin: "kuài", ru: "кусок; юань (разг.)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w404/404A_cm_f_l_6_3.mp3" },
-  { hanzi: "来", pinyin: "lái", ru: "приходить", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w345/2345A_cm_f_l_6_3.mp3" },
-  { hanzi: "老师", pinyin: "lǎoshī", ru: "учитель", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w89/89A_cm_f_l_6_3.mp3" },
-  { hanzi: "了", pinyin: "le", ru: "грамм. частица (завершение)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w208/17208A_cm_f_l_6_3.mp3" },
-  { hanzi: "冷", pinyin: "lěng", ru: "холодный", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w518/3518A_cm_f_l_6_3.mp3" },
-  { hanzi: "里", pinyin: "lǐ", ru: "внутри", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w341/2341A_cm_f_l_6_3.mp3" },
-  { hanzi: "六", pinyin: "liù", ru: "шесть", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w132/132A_cm_f_l_6_3.mp3" },
-  { hanzi: "妈妈", pinyin: "māma", ru: "мама", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w94/94A_cm_f_l_6_3.mp3" },
-  { hanzi: "吗", pinyin: "ma", ru: "вопросительная частица", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w311/2311A_cm_f_l_6_3.mp3" },
-  { hanzi: "买", pinyin: "mǎi", ru: "покупать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w69/69A_cm_f_l_6_3.mp3" },
-  { hanzi: "猫", pinyin: "māo", ru: "кошка", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w505/3505A_cm_f_l_6_3.mp3" },
-  { hanzi: "没", pinyin: "méi", ru: "нет; не иметь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w28/17028A_cm_f_l_6_3.mp3" },
-  { hanzi: "没关系", pinyin: "méiguānxi", ru: "ничего страшного", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w54/54A_cm_f_l_p226630_3.mp3" },
-  { hanzi: "米饭", pinyin: "mǐfàn", ru: "варёный рис", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w412/412A_cm_f_l_p226630_3.mp3" },
-  { hanzi: "明天", pinyin: "míngtiān", ru: "завтра", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w421/421A_cm_f_l_6_3.mp3" },
-  { hanzi: "名字", pinyin: "míngzi", ru: "имя", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w88/88A_cm_f_l_6_3.mp3" },
-  { hanzi: "哪", pinyin: "nǎ", ru: "какой", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w26/59026A_cm_f_l_6_3.mp3" },
-  { hanzi: "哪儿", pinyin: "nǎr", ru: "где", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w352/352A_cm_f_l_p158621-19668_3.mp3" },
-  { hanzi: "那", pinyin: "nà", ru: "тот", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w363/363A_cm_f_l_6_3.mp3" },
-  { hanzi: "呢", pinyin: "ne", ru: "частица (а ...?)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w755/2755A_cm_f_l_6_3.mp3" },
-  { hanzi: "能", pinyin: "néng", ru: "мочь, уметь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w544/3544A_cm_f_l_6_3.mp3" },
-  { hanzi: "你", pinyin: "nǐ", ru: "ты", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w83/83A_cm_f_l_6_3.mp3" },
-  { hanzi: "年", pinyin: "nián", ru: "год", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w427/427A_cm_f_l_6_3.mp3" },
-  { hanzi: "女儿", pinyin: "nǚ'ér", ru: "дочь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w68/11068A_cm_f_l_6_3.mp3" },
-  { hanzi: "朋友", pinyin: "péngyou", ru: "друг", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w360/360A_cm_f_l_6_3.mp3" },
-  { hanzi: "漂亮", pinyin: "piàoliang", ru: "красивый", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w780/8780A_cm_f_l_u30_3.mp3" },
-  { hanzi: "苹果", pinyin: "píngguǒ", ru: "яблоко", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w689/2689A_cm_f_l_6_3.mp3" },
-  { hanzi: "七", pinyin: "qī", ru: "семь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w133/133A_cm_f_l_p294826-59688_3.mp3" },
-  { hanzi: "前面", pinyin: "qiánmiàn", ru: "впереди", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w800/2800A_cm_f_l_o12_4.mp3"},
-  { hanzi: "钱", pinyin: "qián", ru: "деньги", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w67/67A_cm_f_l_6_3.mp3"},
-  { hanzi: "请", pinyin: "qǐng", ru: "приглашать; пожалуйста", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w811/4811A_cm_f_l_p294826-104881_3.mp3" },
-  { hanzi: "去", pinyin: "qù", ru: "идти", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w368/368A_cm_f_l_6_3.mp3" },
-  { hanzi: "热", pinyin: "rè", ru: "жарко", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w727/3727A_cm_f_l_6_3.mp3" },
-  { hanzi: "人", pinyin: "rén", ru: "человек", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w354/354A_cm_f_l_6_3.mp3" },
-  { hanzi: "认识", pinyin: "rènshi", ru: "знать; быть знакомым", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w355/355A_cm_f_l_6_3.mp3" },
-  { hanzi: "日", pinyin: "rì", ru: "день, число", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w453/3453A_cm_f_l_p294826-105036_3.mp3" },
-  { hanzi: "三", pinyin: "sān", ru: "три", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w396/59396A_cm_f_l_6_3.mp3" },
-  { hanzi: "商店", pinyin: "shāngdiàn", ru: "магазин", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w565/3565A_cm_f_l_6_3.mp3" },
-  { hanzi: "上", pinyin: "shàng", ru: "верх; идти в (школу)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w540/2540A_cm_f_l_6_3.mp3"  },
-  { hanzi: "上午", pinyin: "shàngwǔ", ru: "утро", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w422/422A_cm_f_l_6_3.mp3"  },
-  { hanzi: "少", pinyin: "shǎo", ru: "мало", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w462/3462A_cm_f_l_6_3.mp3"  },
-  { hanzi: "谁", pinyin: "shéi", ru: "кто", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w365/365A_cm_f_l_6_3.mp3"  },
-  { hanzi: "什么", pinyin: "shénme", ru: "что", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w796/2796A_cm_f_l_6_3.mp3"  },
-  { hanzi: "十", pinyin: "shí", ru: "десять", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w136/136A_cm_f_l_6_3.mp3"  },
-  { hanzi: "时候", pinyin: "shíhou", ru: "время, момент", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w696/2696A_cm_f_l_6_3.mp3"  },
-  { hanzi: "是", pinyin: "shì", ru: "быть, являться", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w362/362A_cm_f_l_6_3.mp3"  },
-  { hanzi: "书", pinyin: "shū", ru: "книга", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w435/2435A_cm_f_l_6_3.mp3"  },
-  { hanzi: "水", pinyin: "shuǐ", ru: "вода", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w22/22A_cm_f_l_6_3.mp3"  },
-  { hanzi: "水果", pinyin: "shuǐguǒ", ru: "фрукты", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w240/3240A_cm_f_l_6_3.mp3"  },
-  { hanzi: "睡觉", pinyin: "shuìjiào", ru: "спать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w949/8949A_cm_f_l_p48676_3.mp3"  },
-  { hanzi: "说话", pinyin: "shuōhuà", ru: "говорить", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w729/4729A_cm_f_l_p167233_3.mp3"  },
-  { hanzi: "四", pinyin: "sì", ru: "четыре", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w130/130A_cm_f_l_6_3.mp3"  },
-  { hanzi: "岁", pinyin: "suì", ru: "возраст (лет)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w428/428A_cm_f_l_6_3.mp3"  },
-  { hanzi: "他", pinyin: "tā", ru: "он", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w14/14A_cm_f_l_p48676-16_3.mp3"  },
-  { hanzi: "她", pinyin: "tā", ru: "она", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w15/15A_cm_f_l_6_3.mp3"  },
-  { hanzi: "太", pinyin: "tài", ru: "слишком; очень", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w518/2518A_cm_f_l_6_3.mp3"  },
-  { hanzi: "天气", pinyin: "tiānqì", ru: "погода", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w180/9180A_cm_f_l_p226630_3.mp3"  },
-  { hanzi: "听", pinyin: "tīng", ru: "слушать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w97/97A_cm_f_l_6_3.mp3"  },
-  { hanzi: "同学", pinyin: "tóngxué", ru: "одноклассник", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w792/2792A_cm_f_l_p67786_3.mp3"  },
-  { hanzi: "喂", pinyin: "wèi", ru: "алло", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w791/13791A_cm_f_l_6_3.mp3"  },
-  { hanzi: "我", pinyin: "wǒ", ru: "я", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w433/3433A_cm_f_l_6_3.mp3"  },
-  { hanzi: "我们", pinyin: "wǒmen", ru: "мы", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w776/2776A_cm_f_l_6_3.mp3"  },
-  { hanzi: "五", pinyin: "wǔ", ru: "пять", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w131/131A_cm_f_l_6_3.mp3"  },
-  { hanzi: "喜欢", pinyin: "xǐhuān", ru: "нравиться", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w480/2480A_cm_f_l_6_3.mp3"  },
-  { hanzi: "下", pinyin: "xià", ru: "внизу; следующий", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w541/2541A_cm_f_l_6_3.mp3"  },
-  { hanzi: "下午", pinyin: "xiàwǔ", ru: "днём (после полудня)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w423/423A_cm_f_l_u205272-205272_3.mp3"  },
-  { hanzi: "下雨", pinyin: "xià yǔ", ru: "идёт дождь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w853/3853A_cm_f_l_6_3.mp3"  },
-  { hanzi: "先生", pinyin: "xiānsheng", ru: "господин", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w330/2330A_cm_f_l_6_3.mp3"  },
-  { hanzi: "现在", pinyin: "xiànzài", ru: "сейчас", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w307/18307A_cm_f_l_u30_3.mp3"  },
-  { hanzi: "想", pinyin: "xiǎng", ru: "хотеть; думать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w852/852A_cm_f_l_p48676_3.mp3"  },
-  { hanzi: "小", pinyin: "xiǎo", ru: "маленький", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w402/402A_cm_f_l_p226630_3.mp3"  },
-  { hanzi: "小姐", pinyin: "xiǎojiě", ru: "барышня, мисс", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w331/2331A_cm_f_l_u30_3.mp3"  },
-  { hanzi: "些", pinyin: "xiē", ru: "несколько", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w687/2687A_cm_f_l_p294826-15407_3.mp3"  },
-  { hanzi: "写", pinyin: "xiě", ru: "писать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w789/2789A_cm_f_l_p48676_3.mp3"  },
-  { hanzi: "谢谢", pinyin: "xièxie", ru: "спасибо", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w581/8581A_cm_f_l_o12-1_4.mp3"  },
-  { hanzi: "星期", pinyin: "xīngqī", ru: "неделя; день недели", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w139/139A_cm_f_l_u205272-205272_3.mp3"  },
-  { hanzi: "学生", pinyin: "xuésheng", ru: "ученик, студент", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w91/91A_cm_f_l_6_2.mp3"  },
-  { hanzi: "学习", pinyin: "xuéxí", ru: "учиться", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w359/359A_cm_f_l_6_3.mp3"  },
-  { hanzi: "学校", pinyin: "xuéxiào", ru: "школа", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w95/95A_cm_f_l_p167233_3.mp3"  },
-  { hanzi: "一", pinyin: "yī", ru: "один", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w37/37A_cm_f_l_p48676-66617_3.mp3"  },
-  { hanzi: "医生", pinyin: "yīshēng", ru: "врач", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w110/110A_cm_f_l_p226630_3.mp3"  },
-  { hanzi: "医院", pinyin: "yīyuàn", ru: "больница", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w109/109A_cm_f_l_p67786_3.mp3"  },
-  { hanzi: "椅子", pinyin: "yǐzi", ru: "стул", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w658/3658A_cm_f_l_6_3.mp3"  },
-  { hanzi: "有", pinyin: "yǒu", ru: "иметь", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w105/105A_cm_f_l_o12-12-12594_4.mp3"  },
-  { hanzi: "月", pinyin: "yuè", ru: "месяц", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w418/418A_cm_f_l_6_3.mp3"  },
-  { hanzi: "在", pinyin: "zài", ru: "в; находиться", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w344/2344A_cm_f_l_6_3.mp3"  },
-  { hanzi: "再见", pinyin: "zàijiàn", ru: "до свидания", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w50/50A_cm_f_l_p226630_3.mp3"  },
-  { hanzi: "怎么", pinyin: "zěnme", ru: "как?", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w409/409A_cm_f_l_6_3.mp3"  },
-  { hanzi: "怎么样", pinyin: "zěnmeyàng", ru: "как насчёт, как, каким образом", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w783/2783A_cm_f_l_p226630_3.mp3"  },
-  { hanzi: "这", pinyin: "zhè", ru: "этот", audio: "	https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w364/364A_cm_f_l_6_3.mp3"  },
-  { hanzi: "中国", pinyin: "Zhōngguó", ru: "Китай", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w57/57A_cm_f_l_6_3.mp3"  },
-  { hanzi: "中午", pinyin: "zhōngwǔ", ru: "полдень", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w438/438A_cm_f_l_6_3.mp3"  },
-  { hanzi: "住", pinyin: "zhù", ru: "жить (где-то)", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w756/2756A_cm_f_l_6_3.mp3"  },
-  { hanzi: "桌子", pinyin: "zhuōzi", ru: "стол", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w199/3199A_cm_f_l_p226630_3.mp3"  },
-  { hanzi: "字", pinyin: "zì", ru: "иероглиф, слово", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w887/11887A_cm_f_l_o30-30-19815_3.mp3"  },
-  { hanzi: "昨天", pinyin: "zuótiān", ru: "вчера", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w420/420A_cm_f_l_6_3.mp3"  },
-  { hanzi: "做", pinyin: "zuò", ru: "делать", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w390/390A_cm_f_l_o15_3.mp3"  },
-  { hanzi: "坐", pinyin: "zuò", ru: "сидеть", audio: "https://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w751/3751A_cm_f_l_o15_3.mp3"  }
-    ];
-
-    let currentIndex = 0;
-    let startTime;
-    let selectedRu = null;
-    let audioMap = new Map(); // карта для хранения аудио объектов текущего раунда
-
-    function shuffle(arr) {
-      return arr.sort(() => Math.random() - 0.5);
-    }
-
-    
-function renderPair() {
-  const rusCol = document.getElementById("rus");
-  const hanziCol = document.getElementById("hanzi");
-
-  rusCol.innerHTML = "";
-  hanziCol.innerHTML = "";
-  audioMap.clear(); // очищаем старые аудио перед рендером
-
-  // создаём кнопки отдельно для русских и китайских слов
-  const ruButtons = currentWords.map(w => {
-    const btn = document.createElement("button");
-    btn.textContent = w.ru;
-    btn.className = "px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300";
-    btn.onclick = () => selectRu(w, btn);
-    return btn;
-  });
-
-  const hanziButtons = currentWords.map(w => {
-    const btn = document.createElement("button");
-    btn.textContent = w.hanzi;
-    btn.className = "px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300";
-    btn.onclick = () => selectHanzi(w, btn);
-
-
-    // подгружаем аудио заранее
-    if (w.audio) {
-      const audio = new Audio(w.audio);
-      audio.load(); // заставляем браузер загрузить файл
-      audioMap.set(w.hanzi, audio);
-    }
-    return btn;
-  });
-
-  // перемешиваем перед добавлением в DOM
-  shuffle(ruButtons).forEach(btn => rusCol.appendChild(btn));
-  shuffle(hanziButtons).forEach(btn => hanziCol.appendChild(btn));
-}
-
-function selectRu(word, btn) {
-  // снимаем выделение с предыдущей выбранной карточки
-  if (selectedRu && selectedRu.btn) {
-    selectedRu.btn.classList.remove("selected");
-  }
-
-  selectedRu = { word, btn };
-  btn.classList.add("selected"); // выделяем выбранную
-}
-
-function selectHanzi(word, btn) {
-  if (!selectedRu) return;
-
-  if (selectedRu.word.hanzi === word.hanzi) {
-
-    // воспроизводим заранее загруженное аудио
-    const audio = audioMap.get(word.hanzi);
-    if (audio) audio.play();
-
-    // отмечаем кнопки как решённые
-    selectedRu.btn.disabled = true;
-    btn.disabled = true;
-    selectedRu.btn.classList.add("opacity-50");
-    selectedRu.btn.classList.remove("selected"); // убираем выделение
-    btn.classList.remove("selected");
-    btn.classList.add("opacity-50");
-
-    // удаляем решённую пару из currentWords
-    currentWords = currentWords.filter(w => w.hanzi !== word.hanzi);
-
-    // проверяем, закончился ли текущий раунд
-    if (currentWords.length === 0) {
-      // берем следующий раунд из оставшихся слов
-      if (remainingWords.length === 0) {
-        finishGame();
-      } else {
-        loadNextRound();
-      }
-    }
-  }else {
-    // пара неправильная
-    selectedRu.btn.classList.remove("selected"); // снимаем выделение
-    // можно добавить визуальный эффект ошибки (опционально)
-  }
-
-  selectedRu = null;
-}
-
-function loadNextRound() {
-  const nextCount = Math.min(5, remainingWords.length);
-  currentWords = shuffle(remainingWords).slice(0, nextCount);
-  // убираем выбранные слова из remainingWords
-  remainingWords = remainingWords.filter(w => !currentWords.includes(w));
-  renderPair();
-}
-
-function finishGame() {
-  const endTime = Date.now();
-  const timeTaken = ((endTime - startTime) / 1000).toFixed(1);
-  document.getElementById("game-board").classList.add("hidden");
-  document.getElementById("result").classList.remove("hidden");
-  document.getElementById("controls").classList.remove("hidden");
-  document.getElementById("result").textContent = `Готово! Вы справились за ${timeTaken} секунд.`;
-}
-
-function startGame() {
-  remainingWords = shuffle([...words]);
-  startTime = Date.now();
-  document.getElementById("game-board").classList.remove("hidden");
-  document.getElementById("result").classList.add("hidden");
-  document.getElementById("controls").classList.add("hidden");
-  loadNextRound();
-}
-
-document.getElementById("restart").onclick = startGame;
-
-// автозапуск при загрузке
-startGame();
-
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
   </script>
+  
 </body>
 </html>
