@@ -10,17 +10,25 @@
     text-align: center;
     padding: 20px;
   }
-  #word-container {
+   #word-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
   }
+
   .writer {
-    width: 120px;
-    height: 120px;
     border: 1px solid #ccc;
+    flex: 1 1 80px;   /* минимальная ширина 80px, растёт по доступной ширине */
+    max-width: 220px; /* максимальная ширина */
+    height: auto;     /* высота будет установлена через JS для квадрата */
+  }
+
+  @media (max-width: 768px) {
+    .writer {
+      flex: 1 1 40%;  /* на маленьких экранах блоки занимают почти половину ширины */
+    }
   }
   #pinyin {
     font-size: 20px;
@@ -152,6 +160,20 @@ function showNextWord() {
 }
 
 init();
+</script>
+
+
+  <script>
+function updateWriterSizes() {
+  document.querySelectorAll('.writer').forEach(div => {
+    const width = div.offsetWidth;
+    div.style.height = width + 'px'; // квадратный блок
+  });
+}
+
+// вызываем при загрузке и при изменении размера окна
+window.addEventListener('resize', updateWriterSizes);
+window.addEventListener('load', updateWriterSizes);
 </script>
 </body>
 </html>
