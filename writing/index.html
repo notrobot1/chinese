@@ -118,8 +118,8 @@ function showNextWord() {
     container.appendChild(div);
 
     const w = HanziWriter.create(div.id, ch, {
-      width: 120,
-      height: 120,
+      width: div.offsetWidth,
+      height: div.offsetWidth,
       showOutline: true,
       showCharacter: false,
       padding: 5,
