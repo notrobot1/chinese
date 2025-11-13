@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Собери иероглиф по штрихам</title>
+<script src="https://unpkg.com/hanzi-writer/dist/hanzi-writer.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  #word-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .writer {
+    width: 120px;
+    height: 120px;
+    border: 1px solid #ccc;
+  }
+  #pinyin {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+  #translation {
+    font-size: 18px;
+    color: #555;
+    margin-top: 5px;
+  }
+  #controls {
+    margin-top: 15px;
+  }
+  button {
+    font-size: 16px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  #progress {
+    margin-top: 15px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+<h2>Собери иероглиф по штрихам</h2>
+
+<div id="word-container"></div>
+<div id="pinyin"></div>
+<div id="translation"></div>
+<div id="controls">
+  <button id="play-audio">▶️ Воспроизвести</button>
+</div>
+<div id="progress"></div>
+
+<script>
+async function fetchWords() {
+  const urls = [
+    "https://notrobot1.github.io/chinese/words/hsk1/words.json",
+    "https://notrobot1.github.io/chinese/words/hsk2/words.json"
+  ];
+  const results = await Promise.all(urls.map(u => fetch(u).then(r => r.json())));
+  return results.flat(); // объединяем массивы
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let words = [];
+let totalCount = 0;
+
+async function init() {
+  words = shuffle(await fetchWords());
+  totalCount = words.length;
+  showNextWord();
+}
+
+function showNextWord() {
+  if (words.length === 0) {
+    document.getElementById("word-container").innerHTML =
+      "<h3>Поздравляем! Все слова пройдены 🎉</h3>";
+    document.getElementById("pinyin").textContent = "";
+    document.getElementById("translation").textContent = "";
+    document.getElementById("controls").style.display = "none";
+    document.getElementById("progress").textContent =
+      `Всего слов: ${totalCount}`;
+    return;
+  }
+
+  const word = words[0];
+  const container = document.getElementById("word-container");
+  container.innerHTML = "";
+
+  const chars = word.hanzi.split("");
+  const writers = [];
+  let remaining = chars.length; // сколько блоков осталось пройти
+
+  chars.forEach((ch, idx) => {
+    const div = document.createElement("div");
+    div.className = "writer";
+    div.id = "writer_" + idx;
+    container.appendChild(div);
+
+    const w = HanziWriter.create(div.id, ch, {
+      width: 120,
+      height: 120,
+      showOutline: true,
+      showCharacter: false,
+      padding: 5,
+      showHintAfterMisses: 1
+    });
+
+    w._done = false;
+
+    w.quiz({
+      onComplete: () => {
+        if (w._done) return;
+        w._done = true;
+        remaining--;
+
+        div.style.border = "2px solid #8f8";
+
+        if (remaining === 0) {
+          words.shift();
+          document.getElementById("progress").textContent =
+            `Пройдено: ${totalCount - words.length}/${totalCount}`;
+          setTimeout(showNextWord, 300);
+        }
+      }
+    });
+
+    writers.push(w);
+  });
+
+  // обновляем текстовую часть
+  document.getElementById("pinyin").textContent = `${word.hanzi} — ${word.pinyin}`;
+  document.getElementById("translation").textContent = word.ru || "";
+  document.getElementById("progress").textContent =
+    `Пройдено: ${totalCount - words.length}/${totalCount}`;
+
+  // воспроизведение
+  const audio = new Audio(word.audio);
+  document.getElementById("play-audio").onclick = () => audio.play();
+}
+
+init();
+</script>
+</body>
+</html>
