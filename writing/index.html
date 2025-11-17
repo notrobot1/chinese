@@ -1,3 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Собери иероглиф по штрихам</title>
+<script src="https://unpkg.com/hanzi-writer/dist/hanzi-writer.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  #word-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .writer {
+    border: 1px solid #ccc;
+    flex: 1 1 80px;
+    max-width: 220px;
+    height: auto;
+  }
+  @media (max-width: 768px) {
+    .writer {
+      flex: 1 1 40%;
+    }
+  }
+  #pinyin {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+  #translation {
+    font-size: 18px;
+    color: #555;
+    margin-top: 5px;
+  }
+  #controls {
+    margin-top: 15px;
+  }
+  button {
+    font-size: 16px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  #progress {
+    margin-top: 15px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+<h2>Собери иероглиф по штрихам</h2>
+
+<div id="word-container"></div>
+<div id="pinyin"></div>
+<div id="translation"></div>
+<div id="controls">
+  <button id="play-audio">▶️ Воспроизвести</button>
+</div>
+<div id="progress"></div>
+
 <script>
 async function fetchWords() {
   const urls = [
@@ -18,19 +82,29 @@ function shuffle(array) {
 
 let words = [];
 let totalCount = 0;
-let currentIndex = 0; // текущий индекс слова
+let currentIndex = 0;
 
 async function init() {
-  words = shuffle(await fetchWords());
-  totalCount = words.length;
-
-  // проверяем localStorage
-  const savedIndex = localStorage.getItem('currentWordIndex');
-  if (savedIndex !== null && !isNaN(savedIndex)) {
-    currentIndex = parseInt(savedIndex, 10);
+  const savedState = localStorage.getItem('hanziProgress');
+  if (savedState) {
+    // если есть сохранение, загружаем
+    const state = JSON.parse(savedState);
+    words = state.words;
+    currentIndex = state.currentIndex;
+  } else {
+    // иначе загружаем и перемешиваем
+    words = shuffle(await fetchWords());
+    currentIndex = 0;
   }
-
+  totalCount = words.length;
   showNextWord();
+}
+
+function saveProgress() {
+  localStorage.setItem('hanziProgress', JSON.stringify({
+    words: words,
+    currentIndex: currentIndex
+  }));
 }
 
 function showNextWord() {
@@ -41,7 +115,7 @@ function showNextWord() {
     document.getElementById("translation").textContent = "";
     document.getElementById("controls").style.display = "none";
     document.getElementById("progress").textContent = `Всего слов: ${totalCount}`;
-    localStorage.removeItem('currentWordIndex');
+    localStorage.removeItem('hanziProgress');
     return;
   }
 
@@ -79,7 +153,7 @@ function showNextWord() {
 
         if (remaining === 0) {
           currentIndex++;
-          localStorage.setItem('currentWordIndex', currentIndex); // сохраняем прогресс
+          saveProgress(); // сохраняем прогресс
           document.getElementById("progress").textContent =
             `Пройдено: ${currentIndex}/${totalCount}`;
           setTimeout(showNextWord, 300);
@@ -99,5 +173,18 @@ function showNextWord() {
   document.getElementById("play-audio").onclick = () => audio.play();
 }
 
+// квадратные блоки для каждого символа
+function updateWriterSizes() {
+  document.querySelectorAll('.writer').forEach(div => {
+    const width = div.offsetWidth;
+    div.style.height = width + 'px';
+  });
+}
+
+window.addEventListener('resize', updateWriterSizes);
+window.addEventListener('load', updateWriterSizes);
+
 init();
 </script>
+</body>
+</html>
