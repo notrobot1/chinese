@@ -1,69 +1,3 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="utf-8" />
-<title>Собери иероглиф по штрихам</title>
-<script src="https://unpkg.com/hanzi-writer/dist/hanzi-writer.min.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
-   #word-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .writer {
-    border: 1px solid #ccc;
-    flex: 1 1 80px;   /* минимальная ширина 80px, растёт по доступной ширине */
-    max-width: 220px; /* максимальная ширина */
-    height: auto;     /* высота будет установлена через JS для квадрата */
-  }
-
-  @media (max-width: 768px) {
-    .writer {
-      flex: 1 1 40%;  /* на маленьких экранах блоки занимают почти половину ширины */
-    }
-  }
-  #pinyin {
-    font-size: 20px;
-    margin-top: 10px;
-  }
-  #translation {
-    font-size: 18px;
-    color: #555;
-    margin-top: 5px;
-  }
-  #controls {
-    margin-top: 15px;
-  }
-  button {
-    font-size: 16px;
-    padding: 6px 12px;
-    cursor: pointer;
-  }
-  #progress {
-    margin-top: 15px;
-    font-size: 18px;
-  }
-</style>
-</head>
-<body>
-<h2>Собери иероглиф по штрихам</h2>
-
-<div id="word-container"></div>
-<div id="pinyin"></div>
-<div id="translation"></div>
-<div id="controls">
-  <button id="play-audio">▶️ Воспроизвести</button>
-</div>
-<div id="progress"></div>
-
 <script>
 async function fetchWords() {
   const urls = [
@@ -71,7 +5,7 @@ async function fetchWords() {
     "https://notrobot1.github.io/chinese/words/hsk2/words.json"
   ];
   const results = await Promise.all(urls.map(u => fetch(u).then(r => r.json())));
-  return results.flat(); // объединяем массивы
+  return results.flat();
 }
 
 function shuffle(array) {
@@ -84,32 +18,39 @@ function shuffle(array) {
 
 let words = [];
 let totalCount = 0;
+let currentIndex = 0; // текущий индекс слова
 
 async function init() {
   words = shuffle(await fetchWords());
   totalCount = words.length;
+
+  // проверяем localStorage
+  const savedIndex = localStorage.getItem('currentWordIndex');
+  if (savedIndex !== null && !isNaN(savedIndex)) {
+    currentIndex = parseInt(savedIndex, 10);
+  }
+
   showNextWord();
 }
 
 function showNextWord() {
-  if (words.length === 0) {
+  if (currentIndex >= totalCount) {
     document.getElementById("word-container").innerHTML =
       "<h3>Поздравляем! Все слова пройдены 🎉</h3>";
     document.getElementById("pinyin").textContent = "";
     document.getElementById("translation").textContent = "";
     document.getElementById("controls").style.display = "none";
-    document.getElementById("progress").textContent =
-      `Всего слов: ${totalCount}`;
+    document.getElementById("progress").textContent = `Всего слов: ${totalCount}`;
+    localStorage.removeItem('currentWordIndex');
     return;
   }
 
-  const word = words[0];
+  const word = words[currentIndex];
   const container = document.getElementById("word-container");
   container.innerHTML = "";
 
   const chars = word.hanzi.split("");
-  const writers = [];
-  let remaining = chars.length; // сколько блоков осталось пройти
+  let remaining = chars.length;
 
   chars.forEach((ch, idx) => {
     const div = document.createElement("div");
@@ -137,22 +78,21 @@ function showNextWord() {
         div.style.border = "2px solid #8f8";
 
         if (remaining === 0) {
-          words.shift();
+          currentIndex++;
+          localStorage.setItem('currentWordIndex', currentIndex); // сохраняем прогресс
           document.getElementById("progress").textContent =
-            `Пройдено: ${totalCount - words.length}/${totalCount}`;
+            `Пройдено: ${currentIndex}/${totalCount}`;
           setTimeout(showNextWord, 300);
         }
       }
     });
-
-    writers.push(w);
   });
 
   // обновляем текстовую часть
   document.getElementById("pinyin").textContent = `${word.hanzi} — ${word.pinyin}`;
   document.getElementById("translation").textContent = word.ru || "";
   document.getElementById("progress").textContent =
-    `Пройдено: ${totalCount - words.length}/${totalCount}`;
+    `Пройдено: ${currentIndex}/${totalCount}`;
 
   // воспроизведение
   const audio = new Audio(word.audio);
@@ -161,19 +101,3 @@ function showNextWord() {
 
 init();
 </script>
-
-
-  <script>
-function updateWriterSizes() {
-  document.querySelectorAll('.writer').forEach(div => {
-    const width = div.offsetWidth;
-    div.style.height = width + 'px'; // квадратный блок
-  });
-}
-
-// вызываем при загрузке и при изменении размера окна
-window.addEventListener('resize', updateWriterSizes);
-window.addEventListener('load', updateWriterSizes);
-</script>
-</body>
-</html>
