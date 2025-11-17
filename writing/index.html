@@ -49,18 +49,72 @@
     margin-top: 15px;
     font-size: 18px;
   }
+
+  /* Модальное окно */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+  }
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: left;
+  }
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: black;
+  }
+  label {
+    display: block;
+    margin: 10px 0;
+  }
 </style>
 </head>
 <body>
 <h2>Собери иероглиф по штрихам</h2>
+<h1 id="title"></h1>
 
 <div id="word-container"></div>
 <div id="pinyin"></div>
 <div id="translation"></div>
 <div id="controls">
   <button id="play-audio">▶️ Воспроизвести</button>
+  <button id="settings-btn">⚙ Настройки</button>
 </div>
 <div id="progress"></div>
+
+<!-- Модальное окно настроек -->
+<div id="settings-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Настройки</h3>
+    <label>
+      <input type="checkbox" id="show-hanzi">
+      Показывать иероглиф целиком
+    </label>
+    <label>
+      <input type="checkbox" id="hard-mode">
+      Сложный режим (повторять при ошибках)
+    </label>
+    <button id="save-settings">Сохранить</button>
+  </div>
+</div>
 
 <script>
 async function fetchWords() {
@@ -83,16 +137,26 @@ function shuffle(array) {
 let words = [];
 let totalCount = 0;
 let currentIndex = 0;
+let settings = { showHanzi: true, hardMode: false };
 
 async function init() {
+  // загружаем настройки
+  const savedSettings = localStorage.getItem('hanziSettings');
+  if (savedSettings) {
+    settings = JSON.parse(savedSettings);
+  }
+
+  // применяем настройки в чекбоксах
+  document.getElementById('show-hanzi').checked = settings.showHanzi;
+  document.getElementById('hard-mode').checked = settings.hardMode;
+
+  // загружаем прогресс
   const savedState = localStorage.getItem('hanziProgress');
   if (savedState) {
-    // если есть сохранение, загружаем
     const state = JSON.parse(savedState);
     words = state.words;
     currentIndex = state.currentIndex;
   } else {
-    // иначе загружаем и перемешиваем
     words = shuffle(await fetchWords());
     currentIndex = 0;
   }
@@ -107,11 +171,18 @@ function saveProgress() {
   }));
 }
 
+function saveSettings() {
+  settings.showHanzi = document.getElementById('show-hanzi').checked;
+  settings.hardMode = document.getElementById('hard-mode').checked;
+  localStorage.setItem('hanziSettings', JSON.stringify(settings));
+}
+
 function showNextWord() {
   if (currentIndex >= totalCount) {
     document.getElementById("word-container").innerHTML =
       "<h3>Поздравляем! Все слова пройдены 🎉</h3>";
     document.getElementById("pinyin").textContent = "";
+    document.getElementById("title").textContent = "";
     document.getElementById("translation").textContent = "";
     document.getElementById("controls").style.display = "none";
     document.getElementById("progress").textContent = `Всего слов: ${totalCount}`;
@@ -125,6 +196,7 @@ function showNextWord() {
 
   const chars = word.hanzi.split("");
   let remaining = chars.length;
+  let errorsOccurred = false; // для сложного режима
 
   chars.forEach((ch, idx) => {
     const div = document.createElement("div");
@@ -135,8 +207,8 @@ function showNextWord() {
     const w = HanziWriter.create(div.id, ch, {
       width: div.offsetWidth,
       height: div.offsetWidth,
-      showOutline: true,
-      showCharacter: false,
+      showOutline: settings.showHanzi,
+      showCharacter: settings.showHanzi,
       padding: 5,
       showHintAfterMisses: 1
     });
@@ -144,6 +216,9 @@ function showNextWord() {
     w._done = false;
 
     w.quiz({
+      onMistake: () => {
+        errorsOccurred = true;
+      },
       onComplete: () => {
         if (w._done) return;
         w._done = true;
@@ -152,28 +227,32 @@ function showNextWord() {
         div.style.border = "2px solid #8f8";
 
         if (remaining === 0) {
-          currentIndex++;
-          saveProgress(); // сохраняем прогресс
-          document.getElementById("progress").textContent =
-            `Пройдено: ${currentIndex}/${totalCount}`;
-          setTimeout(showNextWord, 300);
+          // сложный режим: если были ошибки, повторяем текущее слово
+          if (settings.hardMode && errorsOccurred) {
+            setTimeout(showNextWord, 300); // показываем это же слово снова
+          } else {
+            currentIndex++;
+            saveProgress();
+            document.getElementById("progress").textContent =
+              `Пройдено: ${currentIndex}/${totalCount}`;
+            setTimeout(showNextWord, 300);
+          }
         }
       }
     });
   });
 
-  // обновляем текстовую часть
   document.getElementById("pinyin").textContent = `${word.hanzi} — ${word.pinyin}`;
+  document.getElementById("title").textContent = `${word.hanzi}`;
   document.getElementById("translation").textContent = word.ru || "";
   document.getElementById("progress").textContent =
     `Пройдено: ${currentIndex}/${totalCount}`;
 
-  // воспроизведение
   const audio = new Audio(word.audio);
   document.getElementById("play-audio").onclick = () => audio.play();
 }
 
-// квадратные блоки для каждого символа
+// квадратные блоки
 function updateWriterSizes() {
   document.querySelectorAll('.writer').forEach(div => {
     const width = div.offsetWidth;
@@ -183,6 +262,21 @@ function updateWriterSizes() {
 
 window.addEventListener('resize', updateWriterSizes);
 window.addEventListener('load', updateWriterSizes);
+
+// Настройки модального окна
+const modal = document.getElementById("settings-modal");
+const btn = document.getElementById("settings-btn");
+const span = document.querySelector(".close");
+
+btn.onclick = () => modal.style.display = "block";
+span.onclick = () => modal.style.display = "none";
+window.onclick = (event) => { if (event.target == modal) modal.style.display = "none"; };
+document.getElementById("save-settings").onclick = () => {
+  saveSettings();
+  modal.style.display = "none";
+  // перерисуем текущее слово с новыми настройками
+  showNextWord();
+};
 
 init();
 </script>
