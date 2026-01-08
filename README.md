@@ -18,4 +18,6 @@ https://notrobot1.github.io/chinese/words/hsk2/
 
 https://yoyochinese.com/chinese-learning-tools/Mandarin-Chinese-pronunciation-lesson/pinyin-chart-table
 
+https://www.youtube.com/@ChineseDailyPodcast
+
 
