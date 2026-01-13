@@ -8,7 +8,7 @@
     html, body {
       height: 100%;
       margin: 0;
-      overflow: hidden; /* убираем скроллы */
+      overflow: hidden;
     }
 
     body {
@@ -39,13 +39,12 @@
     }
 
     button {
-      touch-action: manipulation; /* убирает задержку на мобилках */
+      touch-action: manipulation;
     }
 
-    /* Адаптив под мобильные устройства */
     @media (max-width: 768px) {
       #game-board {
-        grid-template-columns: 1fr; /* колонки в одну колонку */
+        grid-template-columns: 1fr;
         gap: 1rem;
       }
 
@@ -70,7 +69,6 @@
   <div id="game">
     <h1 class="text-2xl font-bold mb-2 text-center">HSK2: Соедини перевод и иероглиф</h1>
 
-    <!-- Галочка "Показывать пиньинь" -->
     <div class="mb-2 text-center">
       <label class="inline-flex items-center gap-2 text-sm font-medium">
         <input type="checkbox" id="toggle-pinyin" class="accent-blue-500" checked>
@@ -85,7 +83,9 @@
 
     <div id="result" class="mt-4 text-center text-xl font-semibold hidden"></div>
     <div id="controls" class="mt-2 text-center hidden">
-      <button id="restart" class="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">Играть ещё</button>
+      <button id="restart" class="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600">
+        Играть ещё
+      </button>
     </div>
 
     <div id="home-button" class="mt-4 text-center">
@@ -103,6 +103,30 @@
     let selectedRu = null;
     let audioMap = new Map();
 
+    /* ================== БАЛЛЫ ================== */
+
+    const SCORE_KEY = "wordScores";
+
+    function loadScores() {
+      return JSON.parse(localStorage.getItem(SCORE_KEY) || "{}");
+    }
+
+    function saveScores(scores) {
+      localStorage.setItem(SCORE_KEY, JSON.stringify(scores));
+    }
+
+    let wordScores = loadScores();
+
+    function addScore(word, delta) {
+      if (!wordScores[word.hanzi]) {
+        wordScores[word.hanzi] = 0;
+      }
+      wordScores[word.hanzi] += delta;
+      saveScores(wordScores);
+    }
+
+    /* =========================================== */
+
     const toggle = document.getElementById("toggle-pinyin");
     const saved = localStorage.getItem("showPinyin");
     if (saved !== null) toggle.checked = saved === "true";
@@ -115,9 +139,9 @@
     function updatePinyinVisibility() {
       const showPinyin = toggle.checked;
       document.querySelectorAll("#hanzi button").forEach(btn => {
-        const hanzi = btn.dataset.hanzi;
-        const pinyin = btn.dataset.pinyin;
-        btn.textContent = showPinyin ? `${hanzi} (${pinyin})` : hanzi;
+        btn.textContent = showPinyin
+          ? `${btn.dataset.hanzi} (${btn.dataset.pinyin})`
+          : btn.dataset.hanzi;
       });
     }
 
@@ -158,12 +182,12 @@
         return btn;
       });
 
-      shuffle(ruButtons).forEach(btn => rusCol.appendChild(btn));
-      shuffle(hanziButtons).forEach(btn => hanziCol.appendChild(btn));
+      shuffle(ruButtons).forEach(b => rusCol.appendChild(b));
+      shuffle(hanziButtons).forEach(b => hanziCol.appendChild(b));
     }
 
     function selectRu(word, btn) {
-      if (selectedRu && selectedRu.btn) selectedRu.btn.classList.remove("selected");
+      if (selectedRu) selectedRu.btn.classList.remove("selected");
       selectedRu = { word, btn };
       btn.classList.add("selected");
     }
@@ -171,27 +195,31 @@
     function selectHanzi(word, btn) {
       if (!selectedRu) return;
 
+      const remainingCount = currentWords.length;
+
       if (selectedRu.word.hanzi === word.hanzi) {
+        // ✅ правильно
+        const points = Math.max(0, (remainingCount - 1) * 2);
+        addScore(word, points);
+
         const audio = audioMap.get(word.hanzi);
         if (audio) audio.play();
 
         selectedRu.btn.disabled = true;
         btn.disabled = true;
         selectedRu.btn.classList.add("opacity-50");
-        selectedRu.btn.classList.remove("selected");
-        btn.classList.remove("selected");
         btn.classList.add("opacity-50");
+        selectedRu.btn.classList.remove("selected");
 
         currentWords = currentWords.filter(w => w.hanzi !== word.hanzi);
 
         if (currentWords.length === 0) {
-          if (remainingWords.length === 0) {
-            finishGame();
-          } else {
-            loadNextRound();
-          }
+          remainingWords.length === 0 ? finishGame() : loadNextRound();
         }
       } else {
+        // ❌ ошибка
+        addScore(selectedRu.word, -10);
+        addScore(word, -10);
         selectedRu.btn.classList.remove("selected");
       }
 
@@ -199,19 +227,19 @@
     }
 
     function loadNextRound() {
-      const nextCount = Math.min(5, remainingWords.length);
-      currentWords = shuffle(remainingWords).slice(0, nextCount);
+      const count = Math.min(5, remainingWords.length);
+      currentWords = shuffle(remainingWords).slice(0, count);
       remainingWords = remainingWords.filter(w => !currentWords.includes(w));
       renderPair();
     }
 
     function finishGame() {
-      const endTime = Date.now();
-      const timeTaken = ((endTime - startTime) / 1000).toFixed(1);
+      const time = ((Date.now() - startTime) / 1000).toFixed(1);
       document.getElementById("game-board").classList.add("hidden");
       document.getElementById("result").classList.remove("hidden");
       document.getElementById("controls").classList.remove("hidden");
-      document.getElementById("result").textContent = `Готово! Вы справились за ${timeTaken} секунд.`;
+      document.getElementById("result").textContent =
+        `Готово! Вы справились за ${time} секунд.`;
     }
 
     function startGame() {
@@ -225,30 +253,26 @@
 
     document.getElementById("restart").onclick = startGame;
 
-    // Загрузка данных с внешнего URL
-    fetch('https://notrobot1.github.io/chinese/words/hsk2/words.json')
-      .then(response => {
-        if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
-        return response.json();
-      })
+    fetch("https://notrobot1.github.io/chinese/words/hsk2/words.json")
+      .then(r => r.json())
       .then(data => {
         words = data;
         startGame();
       })
-      .catch(error => {
-        console.error('Не удалось загрузить данные:', error);
-        document.getElementById("game").innerHTML = `<p class="text-red-500 text-center">Ошибка загрузки слов. Попробуйте позже.</p>`;
+      .catch(() => {
+        document.getElementById("game").innerHTML =
+          "<p class='text-red-500 text-center'>Ошибка загрузки слов</p>";
       });
   </script>
 
-  <!-- 📊 Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCV9GEMVYB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-  
-    gtag('config', 'G-NCV9GEMVYB');
-  </script>
+    <!-- 📊 Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCV9GEMVYB"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-NCV9GEMVYB');
+    </script>
 </body>
 </html>
