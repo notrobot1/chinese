@@ -110,8 +110,6 @@
 </head>
 <body>
     <div id="game">
-
-
         <div id="endScreen" style="
             display: none; 
             position: absolute; 
@@ -158,7 +156,7 @@
         
             <!-- Центральный заголовок -->
             <h1 style="position: absolute; left: 50%; transform: translateX(-50%);" class="text-2xl font-bold text-center">
-                HSK2—HSK2
+                HSK1—HSK2
             </h1>
         
             <!-- Правый элемент -->
@@ -186,13 +184,23 @@
           
         </div>
 
-        <div style="visibility: hidden;" id="translation">
-            translation
-            
+
+        <div id="translationWindow"
+        style="display: flex;
+            flex-direction: column;
+            visibility: hidden;
+            justify-content: center; 
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            align-items: center; ">
+            <div style="visibility: hidden;" id="translation">
+                translation
+                
+            </div>
+            <p style="visibility: hidden;" id="pinyin">
+                pinyin
+            </p>
         </div>
-        <p style="visibility: hidden;" id="pinyin">
-            pinyin
-        </p>
     
         <!-- Еще одна кнопка -->
         <button id="confirm" style=" background: rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 8px 16px; color: white; width: 100%; ">Подтвердить</button>
@@ -236,18 +244,20 @@ btn.addEventListener('click', () => {
 
     let segments = [];
     let currentWord = [];
+    let fackeWord;
     let mainBuffer = null;
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
     let currentAudio = 0;
     let total = 0;
-    
+    // Неиспользованные кнопки
     let unused = new Map();
     // Массив для кнопок, которые уже на полоске
     let placedButtons = [];
     let stripes = [];
     const confirmBtn = document.getElementById("confirm");
     const divTranslation = document.getElementById("translation");
+    const divTranslationWindow = document.getElementById("translationWindow");
     const pinyin = document.getElementById("pinyin");
     const mainDiv = document.getElementById("game");
 
@@ -304,7 +314,7 @@ btn.addEventListener('click', () => {
         }
 
         if (!placed) {
-                console.log("не влазит")
+            //console.log("не влазит")
             shakeButton(btn); // не влезает ни на одну полоску
         }
     }
@@ -367,6 +377,15 @@ btn.addEventListener('click', () => {
         unused.clear();
         // 3️⃣ Создаём новые кнопки
         let w = segments[currentAudio].text.split(" ")
+        // console.log("Слова ", w)
+        // console.log("Слова ", fackeWord)
+        // Сколько фейковых слов интегрировать 
+        let rand = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+        for (let i = 0; i < rand; i++) {
+            const tmpRND = Math.floor(Math.random() * fackeWord.length);
+            w.push(fackeWord[tmpRND]);
+        }
+
         // Перемешиваем массив слов
         w = shuffleArray(w);
 
@@ -378,7 +397,7 @@ btn.addEventListener('click', () => {
 
             // Добавляем обработчик клика сразу
             btn.addEventListener('click', () => {
-                // console.log("Клик:", btn.textContent);
+               
 
                 // Координаты самой кнопки
                 const btnRect = btn.getBoundingClientRect();
@@ -439,6 +458,34 @@ btn.addEventListener('click', () => {
         segments = await res.json();
     }
 
+    async function loadFake() {
+
+        const cached = localStorage.getItem('fake_hanzi');
+
+        // если уже есть в localStorage — не загружаем заново
+        if (cached) {
+            fackeWord =  JSON.parse(cached);
+            return;
+        }
+        const [hsk1Res, hsk2Res] = await Promise.all([
+            fetch('https://notrobot1.github.io/chinese/words/hsk1/words.json'),
+            fetch('https://notrobot1.github.io/chinese/words/hsk2/words.json')
+        ]);
+
+        const hsk1 = await hsk1Res.json();
+        const hsk2 = await hsk2Res.json();
+
+        // достаём только hanzi
+        const hanziList = [
+            ...hsk1.map(item => item.hanzi),
+            ...hsk2.map(item => item.hanzi),
+        ];
+
+        // сохраняем в localStorage
+        localStorage.setItem('fake_hanzi', JSON.stringify(hanziList));
+        fackeWord = hanziList;
+    }
+
     // 2. Загружаем аудио
     async function loadMainAudio() {
         const response = await fetch('result.mp3');
@@ -451,7 +498,7 @@ btn.addEventListener('click', () => {
     async function init() {
         await loadSegments();
         await loadMainAudio();
-
+        await loadFake();
         // После загрузки JSON и mp3 создаём очередь
         segments = createQueue();
         renderButton();
@@ -461,7 +508,7 @@ btn.addEventListener('click', () => {
     }
     init();
 
-
+    // Нажатия проверки правильности порядка
     confirmBtn.addEventListener("click", () => {
         if (!segments || !segments[currentAudio]) return;
         // Если кнопка дальше значит меняем ее на подтвердить перерисовываем кнопки
@@ -472,8 +519,8 @@ btn.addEventListener('click', () => {
             
             divTranslation.style.visibility = "hidden";
             pinyin.style.visibility = "hidden";
-            if (currentAudio === segments.length){
-                
+            divTranslationWindow.style.visibility = "hidden"
+            if (currentAudio === segments.length){ 
                 showEndScreen();
                 return;
             }
@@ -495,6 +542,7 @@ btn.addEventListener('click', () => {
             }
         });
 
+        // Слова расставлены правильно
         if (wrongWords.length === 0 && userWords.length === correctWords.length) {
 
             // console.log("Все слова расставлены правильно!");
@@ -503,13 +551,19 @@ btn.addEventListener('click', () => {
 
             divTranslation.style.visibility = "visible";
             pinyin.style.visibility = "visible";
+            divTranslationWindow.style.visibility = "visible";
             confirmBtn.textContent = "Дальше";
             confirmBtn.next = true;
-            //alert("Все слова расставлены правильно! 🎉");
         } else {
-            //console.log("Неправильные слова:", wrongWords);
             // Трясём все кнопки
-            placedButtons.forEach(btn => shakeButton(btn));
+           // placedButtons.forEach(btn => shakeButton(btn));
+
+            // Трясём только неправильные кнопки
+            placedButtons.forEach((btn, index) => {
+                if (btn.textContent !== correctWords[index]) {
+                    shakeButton(btn);
+                }
+            });
             //alert("Неправильные слова: " + wrongWords.join(", "));
         }
         
@@ -527,13 +581,13 @@ btn.addEventListener('click', () => {
     });
 
     // Флаг состояния: false = исходное, true = "поднято"
-    let isActive = false;
+    //let isActive = false;
 
 
     // Функция анимации
     // Функция переключения состояния
-    function toggleFillOpacity() {
-        if (!isActive) {
+    function toggleFillOpacity(isPlay) {
+        if (isPlay) {
             // Поднимаем opacity до 1
             animPaths.forEach(p => p.setAttribute('fill-opacity', '1'));
         } else {
@@ -542,14 +596,14 @@ btn.addEventListener('click', () => {
         }
 
         // Переключаем флаг состояния
-        isActive = !isActive;
+        //isActive = !isActive;
     }
 
 
-
+    // Запустить аудио
     svg.addEventListener("click", () => {
         
-        toggleFillOpacity();
+        toggleFillOpacity(true);
 
         // Обрезаем аудио
         let source = audioContext.createBufferSource();
@@ -579,7 +633,7 @@ btn.addEventListener('click', () => {
 
         // Событие окончания воспроизведения
         source.onended = () => {
-            toggleFillOpacity();
+            toggleFillOpacity(false);
         };
         source.playbackRate.value = 1;
         source.start();
@@ -596,7 +650,6 @@ btn.addEventListener('click', () => {
     // добавляем обработчик на каждый элемент
     homeBtn.forEach(btn => {
         btn.addEventListener('click', () => {
-            console.log("To home");
             window.location.href = '/chinese/'; // редирект на главную
         });
     });
