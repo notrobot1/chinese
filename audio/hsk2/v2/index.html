@@ -276,12 +276,15 @@ btn.addEventListener('click', () => {
 
     let segments = [];
     let currentWord = [];
+    // Оценка слов
+    
     let fackeWord;
     let mainBuffer = null;
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
     let currentAudio = 0;
     let total = 0;
+    let playCount = 0;
     // Неиспользованные кнопки
     let unused = new Map();
     // Массив для кнопок, которые уже на полоске
@@ -300,9 +303,46 @@ btn.addEventListener('click', () => {
 
     // Показываем блок
     function showEndScreen() {
+        // Отчистить прогресс 
+        localStorage.removeItem('auditing-v2-progress');
+        localStorage.removeItem('auditing-v2');
+
         endScreen.style.display = 'flex';
     }
 
+    function evaluateWord(word, assessment) {
+        let wordScores = {};
+
+        const storedWordScores = localStorage.getItem('wordScores');
+
+        if (storedWordScores) {
+            try {
+                const parsed = JSON.parse(storedWordScores);
+                const isValid =
+                    typeof parsed === 'object' &&
+                    parsed !== null &&
+                    !Array.isArray(parsed) &&
+                    Object.values(parsed).every(Number.isInteger);
+
+                if (isValid) {
+                    wordScores = parsed;
+                }
+            } catch {
+                // битый JSON — стартуем с пустого
+            }
+        }
+
+        // если слова ещё нет — начинаем с 0
+        if (!Number.isInteger(wordScores[word])) {
+            wordScores[word] = 0;
+        }
+
+        // прибавляем / вычитаем
+        wordScores[word] += assessment;
+
+        // сохраняем
+        localStorage.setItem('wordScores', JSON.stringify(wordScores));
+    }
 
     function placeButtonOnStripe(btn) {
         const btnRect = btn.getBoundingClientRect();
@@ -398,6 +438,9 @@ btn.addEventListener('click', () => {
     }
 
     function renderButton(){
+        // Обнуляем количиство нажатий кнопки проигрывания в этом раунде
+        playCount = 0;
+
         //изменяем прогресс
         progressEl.textContent = `${currentAudio} / ${total}`;
 
@@ -480,7 +523,7 @@ btn.addEventListener('click', () => {
         const segmentsWithText = segments.filter(seg => seg.text && seg.text.trim() !== "");
         if (segmentsWithText.length === 0) return; // если нет ни одного сегмента с текстом
         const shuffledSegments = shuffleArray(segmentsWithText);
-        total = shuffledSegments.length;
+        //
         return shuffledSegments;
     }
 
@@ -528,13 +571,29 @@ btn.addEventListener('click', () => {
 
     // 4. Основная инициализация
     async function init() {
-        await loadSegments();
         await loadMainAudio();
         await loadFake();
-        // После загрузки JSON и mp3 создаём очередь
-        segments = createQueue();
+        const cached = localStorage.getItem('auditing-v2');
+        if (!cached){
+            await loadSegments();
+            // После загрузки JSON и mp3 создаём очередь
+            segments = createQueue();
+            // сохраняем в localStorage
+            localStorage.setItem('auditing-v2', JSON.stringify(segments));
+        }else{
+            segments = JSON.parse(cached);
+        }
+        // Сколько всего
+        total = segments.length;
+        // Пытаемся загрузить прогресс
+        const stored = localStorage.getItem('auditing-v2-progress');
+        // Сколько пройдено
+        currentAudio = (
+        stored !== null && !isNaN(stored)
+        ) ? Number(stored) : 0;
+
+  
         renderButton();
-        
         stripes = document.querySelectorAll('#stripes .stripe'); // глобально
         
     }
@@ -547,8 +606,12 @@ btn.addEventListener('click', () => {
         if (confirmBtn.next){
             confirmBtn.textContent = "Подтвердить";
             confirmBtn.next = false;
+            // Переключаем на следующий тест
             currentAudio = currentAudio +1;
-            
+            // Сохраняем прогерсс
+            localStorage.setItem('auditing-v2-progress', currentAudio);
+
+
             divTranslation.style.visibility = "hidden";
             pinyin.style.visibility = "hidden";
             divTranslationWindow.style.visibility = "hidden"
@@ -559,6 +622,7 @@ btn.addEventListener('click', () => {
             renderButton();
             return;
         }
+        
         // Слова, которые пользователь разместил на полосках
         const userWords = placedButtons.map(b => b.textContent);
 
@@ -567,15 +631,55 @@ btn.addEventListener('click', () => {
 
         // Массив неправильных слов по позиции
         const wrongWords = [];
+        
 
-        userWords.forEach((word, index) => {
-            if (word !== correctWords[index]) {
-                wrongWords.push(word);
+        let userIndex = 0;
+
+        for (let i = 0; i < correctWords.length; i++) {
+            const correctWord = correctWords[i];
+            const userWord = userWords[userIndex];
+
+            if (userWord === correctWord) {
+                // слово совпало — идём дальше
+                userIndex++;
+                continue;
             }
-        });
+
+            // слово пропущено
+            wrongWords.push(correctWord);
+            evaluateWord(correctWord, -5);
+        }
+
+        // for (let i = 0; i < correctWords.length; i++) {
+        //     const userWord = userWords[i];
+        //     const correctWord = correctWords[i];
+
+        //     if (userWord !== correctWord) {
+        //         // если слова нет — это тоже ошибка
+        //         wrongWords.push(correctWord);
+
+        //         // Забираем бал как у слова которое должно быть, так и у слова которое поставил пользователь вместо правильного (если оно есть)
+        //         if (userWord){
+        //             evaluateWord(userWord, -5);
+        //         }
+        //         evaluateWord(correctWord, -5);
+        //     }
+        // }
+
+      
 
         // Слова расставлены правильно
         if (wrongWords.length === 0 && userWords.length === correctWords.length) {
+            // Если слова расставлены правильно смотрим сколько раз было воспроизведено аудио
+            // от количиства воспроизведений будет зависить бал слов 
+
+            // Добавляем к каждому правильному слову бал - количиство нажатий кнопки плей
+            // В данном случае бал не может уйти в минус
+            const finalBal = Math.max(0, 11 - playCount);
+            for (let i = 0; i < correctWords.length; i++) {
+                evaluateWord(correctWords[i], finalBal);
+            }
+
 
             // console.log("Все слова расставлены правильно!");
             divTranslation.textContent = segments[currentAudio].translation;
@@ -634,7 +738,9 @@ btn.addEventListener('click', () => {
 
     // Запустить аудио
     svg.addEventListener("click", () => {
-        
+        // Добавляем количиство нажатий кнопки 
+        playCount = playCount + 1;
+
         toggleFillOpacity(true);
 
         // Обрезаем аудио
