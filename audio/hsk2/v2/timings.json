@@ -322,27 +322,42 @@
   {
     "file_name": "0119_part1s877.mp3",
     "start_time": 115.4873426080002,
-    "end_time": 117.7861180320002
+    "end_time": 117.7861180320002,
+    "text": "汽车 出 问题 了",
+    "translation": "С машиной возникла проблема.",
+    "pinyin": "Qìchē chū wèntí le"
   },
   {
     "file_name": "0120_part1s89.mp3",
     "start_time": 117.7861180320002,
-    "end_time": 120.58121996800021
+    "end_time": 120.58121996800021,
+    "text": "他 写字 很 快",
+    "translation": "Он пишет очень быстро.",
+    "pinyin": "Tā xiězì hěn kuài"
   },
   {
     "file_name": "0121_part1s908.mp3",
     "start_time": 120.58121996800021,
-    "end_time": 124.26448513600022
+    "end_time": 124.26448513600022,
+    "text": "水 喝 完 了",
+    "translation": "Вода закончилась.",
+    "pinyin": "Shuǐ hē wán le"
   },
   {
     "file_name": "0122_part1s913.mp3",
     "start_time": 124.26448513600022,
-    "end_time": 128.60081150400023
+    "end_time": 128.60081150400023,
+    "text": "雨 很 大 但是 他 也 还是 出门 了",
+    "translation": "Сильный дождь, но он всё равно вышел.",
+    "pinyin": "Yǔ hěn dà dànshì tā yě háishì chūmén le"
   },
   {
     "file_name": "0123_part1s915.mp3",
     "start_time": 128.60081150400023,
-    "end_time": 132.33632156800024
+    "end_time": 132.33632156800024,
+    "text": "因为 我 病 了 所以 没 去 上学",
+    "translation": "Потому что я был болен, я не пошёл в школу.",
+    "pinyin": "Yīnwèi wǒ bìng le suǒyǐ méi qù shàngxué"
   },
   {
     "file_name": "0124_part1s950.mp3",
