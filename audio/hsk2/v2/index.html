@@ -224,6 +224,7 @@
             justify-content: center; 
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
+            z-index: 1000;
             align-items: center; ">
             <div style="visibility: hidden;" id="translation">
                 translation
@@ -276,6 +277,7 @@ btn.addEventListener('click', () => {
 
     let segments = [];
     let currentWord = [];
+    let incorrectInCurrentRound = []; // Ошибочные слова, которые мы уже отняли в текущем раунде что бы не отнимать их повторно и не выводить в большой минус
     // Оценка слов
     
     let fackeWord;
@@ -637,17 +639,46 @@ btn.addEventListener('click', () => {
 
         for (let i = 0; i < correctWords.length; i++) {
             const correctWord = correctWords[i];
-            const userWord = userWords[userIndex];
 
-            if (userWord === correctWord) {
-                // слово совпало — идём дальше
-                userIndex++;
-                continue;
+            // Найдем ближайшее совпадение слова пользователя с правильным словом
+            let foundIndex = -1;
+            for (let j = userIndex; j < userWords.length; j++) {
+                if (userWords[j] === correctWord) {
+                    foundIndex = j;
+                    break;
+                }
             }
 
-            // слово пропущено
-            wrongWords.push(correctWord);
-            evaluateWord(correctWord, -5);
+            if (foundIndex === -1) {
+                // слово пропущено — штрафуем только его
+                wrongWords.push(correctWord);
+                if (!incorrectInCurrentRound.includes(correctWord)) {
+                    evaluateWord(correctWord, -5);
+                    incorrectInCurrentRound.push(correctWord);
+                }
+            } else {
+                // есть слова между userIndex и foundIndex — это неправильные слова
+                for (let k = userIndex; k < foundIndex; k++) {
+                    const badWord = userWords[k];
+                    wrongWords.push(badWord);
+                    if (!incorrectInCurrentRound.includes(badWord)) {
+                        evaluateWord(badWord, -5);
+                        incorrectInCurrentRound.push(badWord);
+                    }
+                }
+                // правильное слово найдено — идём дальше
+                userIndex = foundIndex + 1;
+            }
+        }
+
+        // Если остались слова пользователя после последнего правильного слова — они тоже неправильные
+        for (let k = userIndex; k < userWords.length; k++) {
+            const badWord = userWords[k];
+            wrongWords.push(badWord);
+            if (!incorrectInCurrentRound.includes(badWord)) {
+                evaluateWord(badWord, -5);
+                incorrectInCurrentRound.push(badWord);
+            }
         }
 
         // for (let i = 0; i < correctWords.length; i++) {
@@ -782,18 +813,12 @@ btn.addEventListener('click', () => {
 
     // Кнопка "Начать заново" — перезагрузка страницы
     restartBtn.addEventListener('click', () => location.reload());
-
-
-
     // добавляем обработчик на каждый элемент
     homeBtn.forEach(btn => {
         btn.addEventListener('click', () => {
             window.location.href = '/chinese/'; // редирект на главную
         });
     });
-
-
-
   </script>
 
 
