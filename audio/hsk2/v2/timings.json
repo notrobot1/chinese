@@ -370,17 +370,26 @@
   {
     "file_name": "0125_part1s959.mp3",
     "start_time": 136.85550507200026,
-    "end_time": 139.04979070400026
+    "end_time": 139.04979070400026,
+    "text": "请 往 左 拐",
+    "translation": "Пожалуйста, поверните налево.",
+    "pinyin": "Qǐng wǎng zuǒ guǎi"
   },
   {
     "file_name": "0126_part1s990.mp3",
     "start_time": 139.04979070400026,
-    "end_time": 143.07264769600027
+    "end_time": 143.07264769600027,
+    "text": "我 希望 明天 不 下雨",
+    "translation": "Я надеюсь, что завтра не будет дождя.",
+    "pinyin": "Wǒ xīwàng míngtiān bù xiàyǔ"
   },
   {
     "file_name": "0127_part1s991.mp3",
     "start_time": 143.07264769600027,
-    "end_time": 145.58040270400028
+    "end_time": 145.58040270400028,
+    "text": "他 已经 准备 好 了",
+    "translation": "Он уже готов.",
+    "pinyin": "Tā yǐjīng zhǔnbèi hǎo le"
   },
   {
     "file_name": "0128_part1s992.mp3",
