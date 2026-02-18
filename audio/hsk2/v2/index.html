@@ -609,7 +609,8 @@ btn.addEventListener('click', () => {
             confirmBtn.textContent = "Подтвердить";
             confirmBtn.next = false;
             
-
+            // Переключаем на следующий тест
+            currentAudio = currentAudio +1;
 
             divTranslation.style.visibility = "hidden";
             pinyin.style.visibility = "hidden";
@@ -717,10 +718,9 @@ btn.addEventListener('click', () => {
             pinyin.style.visibility = "visible";
             divTranslationWindow.style.visibility = "visible";
             confirmBtn.textContent = "Дальше";
-            // Переключаем на следующий тест
-            currentAudio = currentAudio +1;
+            
             // Сохраняем прогерсс
-            localStorage.setItem('auditing-v2-progress', currentAudio);
+            localStorage.setItem('auditing-v2-progress', currentAudio+1);
             confirmBtn.next = true;
         } else {
             // Трясём все кнопки
