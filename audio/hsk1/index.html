@@ -2,21 +2,88 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>HSK1 Матчинг</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .fade-out {
-      opacity: 0;
-      transition: opacity 0.5s ease;
+ <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
     }
-    .fade-in {
-      opacity: 1;
-      transition: opacity 0.5s ease;
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3f4f6;
     }
+
+    #game {
+      width: 100%;
+      max-width: 800px;
+      min-height: 100dvh;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      padding: 1.5rem;
+      box-sizing: border-box;
+
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
     .selected {
-      border: 0.5px solid #3b82f6; /* синяя рамка */
-      background-color: #bfdbfe; /* светло-голубой фон */
+      border: 1px solid #3b82f6;
+      background-color: #bfdbfe;
     }
+
+    button {
+      touch-action: manipulation;
+    }
+
+    @media (max-width: 640px) {
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            padding: 0;
+            display: block;
+        }
+
+        #game {
+            width: 100vw;
+            max-width: none;
+            height: 100dvh;
+
+            margin: 0;
+            padding: 1rem;
+
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        #game-board {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 0.7rem 0.5rem;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+        }
+    }
+
+
   </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
