@@ -103,17 +103,50 @@
         <p class="text-sm text-gray-600">Соедини перевод и иероглиф. Отлично подходит для тренировки запоминания.</p>
       </a>
 
-       <a href="writing/" 
-          class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+       <a id="writing" href="writing/" 
+          class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition custom-context">
         <h2 class="text-lg font-semibold text-gray-800">Пиши китайские иероглифы</h2>
         <p class="text-sm text-gray-600">Учись писать иероглифы по порядку штрихов, слушай правильное произношение и запоминай слова из уровней HSK 1 и HSK 2.</p>
       </a>
 
-      <a href="audio/hsk2/v2/" 
-          class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+      <a id="audiov2" href="audio/hsk2/v2/" 
+          class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition custom-context">
         <h2 class="text-lg font-semibold text-gray-800">Аудирование HSK1—HSK2</h2>
         <p class="text-sm text-gray-600">Новая версия аудирования. Слушай текст, разбирай фразы и расставляй слова в правильном порядке.</p>
       </a>
+
+
+      <div id="confirmModal"
+            class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        
+        <div class="bg-white rounded-xl p-6 w-80 shadow-xl">
+            <h3 class="text-lg font-semibold mb-4">Подтверждение</h3>
+            <p id="confirmText" class="text-sm text-gray-600 mb-6"></p>
+            
+            <div class="flex justify-end gap-3">
+            <button id="cancelBtn"
+                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">
+                Отмена
+            </button>
+            <button id="confirmBtn"
+                    class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600">
+                Очистить
+            </button>
+            </div>
+        </div>
+        </div>
+
+
+        <!-- Кастомное меню -->
+        <div id="clearProgressBtn"
+            class="hidden fixed bg-white shadow-lg rounded-lg border w-48 z-50">
+            <button class="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                Отчистить прогресс
+            </button>
+        
+        </div>
+
+      
       
       <a href="words-stats.html" 
           class="block p-4 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
@@ -133,6 +166,102 @@
   <script>
     document.getElementById("currentYear").textContent = new Date().getFullYear();
   </script>
+
+
+<script>
+    const clearBtn = document.getElementById("clearProgressBtn");
+    let pressTimer;
+    let currentLink = null;
+    
+    // ===== ПК (правый клик) =====
+    document.addEventListener("contextmenu", function(e) {
+      const link = e.target.closest(".custom-context");
+      if (!link) return;
+    
+      e.preventDefault();
+      currentLink = link;
+      showMenu(e.clientX, e.clientY);
+    });
+    
+    // ===== Сенсор (долгое нажатие) =====
+    document.addEventListener("touchstart", function(e) {
+      const link = e.target.closest(".custom-context");
+      if (!link) return;
+    
+      currentLink = link;
+    
+      pressTimer = setTimeout(() => {
+        const touch = e.touches[0];
+        showMenu(touch.clientX, touch.clientY);
+      }, 600);
+    });
+    
+    document.addEventListener("touchend", function() {
+      clearTimeout(pressTimer);
+    });
+    
+    // ===== Показ меню =====
+    function showMenu(x, y) {
+        clearBtn.style.left = x + "px";
+        clearBtn.style.top = y + "px";
+        clearBtn.classList.remove("hidden");
+    }
+    
+    // ===== Скрытие =====
+    document.addEventListener("click", function() {
+        clearBtn.classList.add("hidden");
+    });
+
+
+    
+
+    const modal = document.getElementById("confirmModal");
+    const confirmText = document.getElementById("confirmText");
+    const confirmBtn = document.getElementById("confirmBtn");
+
+    clearBtn.addEventListener("click", function(e) {
+    e.stopPropagation();
+    if (!currentLink) return;
+
+    let message = "";
+
+    switch (currentLink.id) {
+        case "writing":
+        message = "Если у вас есть прогресс он будет удален. Это не затрагивает общую статистику слов. \n Вы уверены, что хотите очистить прогресс написания?";
+        break;
+
+        case "audiov2":
+        message = "Если у вас есть прогресс он будет удален. Это не затрагивает общую статистику слов. \n Вы уверены, что хотите очистить прогресс аудирования?";
+        break;
+    }
+
+    confirmText.textContent = message;
+
+    clearBtn.classList.add("hidden");
+    modal.classList.remove("hidden");
+    });
+
+    cancelBtn.addEventListener("click", function() {
+    modal.classList.add("hidden");
+    });
+
+    confirmBtn.addEventListener("click", function() {
+    modal.classList.add("hidden");
+
+    if (!currentLink) return;
+
+    if (currentLink.id === "writing") {
+        localStorage.removeItem("hanziProgress");
+    }
+
+    if (currentLink.id === "audiov2") {
+        localStorage.removeItem("auditing-v2-progress");
+        localStorage.removeItem("auditing-v2");
+    }
+    });
+
+    </script>
+    
 
   <!-- 📊 Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NCV9GEMVYB"></script>
