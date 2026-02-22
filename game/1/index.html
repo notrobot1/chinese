@@ -1,0 +1,508 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test game 1</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+<div id="canvas-wrapper" style="width: 100%; height: 100vh; overflow: hidden;"></div>
+
+<script src="./pixi.min.js"></script>
+<script>
+
+let words = [];
+fetch("https://notrobot1.github.io/chinese/game/1/word.json")
+      .then(r => r.json())
+      .then(data => {
+        words = data;
+        startGame();
+      })
+      .catch((err) => {
+    console.error("Ошибка загрузки слов:", err);
+
+    document.getElementById("canvas-wrapper").innerHTML =
+      "<p class='text-red-500 text-center'>Ошибка загрузки слов</p>";
+});
+
+function startGame(){
+
+    let currentWordIndex = 0;
+    let buttonContainer = null;
+    let obstacleAnswered = false;
+    let answerWasCorrect = false;
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Загрузка перемешивание слов
+    function loadWord(index) {
+        const word = words[index];
+
+        slowmoBtn.text = word.ru;
+        slowmoBtn.visible = true;
+
+        const similarArray = word.similar
+            ? word.similar.split(" ").filter(s => s.trim() !== "")
+            : [];
+
+        let options = [word.hanzi, ...similarArray];
+
+        options = shuffle(options);
+
+        return options;
+    }
+
+    //Функция создания кнопок ответа
+    function createOptionButtons(optionsArray) {
+        if (buttonContainer) {
+            app.stage.removeChild(buttonContainer);
+        }
+
+        buttonContainer = new PIXI.Container();
+        app.stage.addChild(buttonContainer);
+
+        const padding = 20;
+        const spacing = 20;
+        const buttonHeight = 70;
+
+        let totalWidth = 0;
+
+        const buttons = optionsArray.map(text => {
+            const container = new PIXI.Container();
+
+            // фон кнопки
+            const bg = new PIXI.Graphics();
+            bg.beginFill(0x333333);
+            bg.drawRoundedRect(0, 0, 120, buttonHeight, 12);
+            bg.endFill();
+
+            // текст
+            const label = new PIXI.Text(text, {
+                fontFamily: 'Arial',
+                fontSize: 28,
+                fill: 0xffffff
+            });
+
+            label.anchor.set(0.5);
+            label.x = 60;
+            label.y = buttonHeight / 2;
+
+            container.addChild(bg);
+            container.addChild(label);
+
+            container.interactive = true;
+            container.buttonMode = true;
+
+            // обработчик нажатия
+            container.on('pointerdown', () => {
+
+                if (obstacleAnswered) return; // защита от повторных кликов
+
+
+                const correctHanzi = words[currentWordIndex].hanzi;
+                console.log("Нажато:", text);
+
+               // Удаляем ВСЕ кнопки кроме правильной
+                buttonContainer.children.forEach(child => {
+                    const childText = child.children[1].text;
+
+                    if (childText !== correctHanzi) {
+                        child.visible = false;
+                    } else {
+                        // правильную делаем зелёной
+                        child.children[0].tint = 0x00aa00;
+                    }
+                });
+
+                // Убираем перевод
+                slowmoBtn.visible = false;
+
+
+                if (text === correctHanzi) {
+                    answerWasCorrect = true;
+                    bg.tint = 0x00aa00; // зелёный
+                } else {
+                    answerWasCorrect = false;
+                    bg.tint = 0xff0000; // красный
+                }
+
+                obstacleAnswered = true;
+
+                // Выключаем слоумо
+                setSlowmo(false);
+                obstacleAnswered = true;
+
+                // Переходим к следующему слову
+                currentWordIndex++;
+
+                if (currentWordIndex >= words.length) {
+                    currentWordIndex = 0; // зацикливание
+                }
+
+                options = loadWord(currentWordIndex);
+
+                // подсветка при клике
+                bg.tint = 0x00aa00;
+
+                setTimeout(() => {
+                    bg.tint = 0xffffff;
+                }, 200);
+            });
+
+            totalWidth += 120 + spacing;
+
+            return container;
+        });
+
+        totalWidth -= spacing;
+
+        // центрируем
+        let startX = (app.screen.width - totalWidth) / 2;
+        let y = app.screen.height - buttonHeight - padding;
+
+        buttons.forEach(btn => {
+            btn.x = startX;
+            btn.y = y;
+            buttonContainer.addChild(btn);
+            startX += 120 + spacing;
+        });
+
+        // адаптация при ресайзе
+        window.addEventListener("resize", () => {
+            let totalWidth = buttons.length * 120 + (buttons.length - 1) * spacing;
+            let startX = (app.screen.width - totalWidth) / 2;
+            let y = app.screen.height - buttonHeight - padding;
+
+            buttons.forEach(btn => {
+                btn.x = startX;
+                btn.y = y;
+                startX += 120 + spacing;
+            });
+        });
+    }
+
+
+
+
+
+
+
+
+    const app = new PIXI.Application({
+        resizeTo: window,
+        backgroundColor: 0x1e1e1e,
+        antialias: true
+    });
+    document.getElementById("canvas-wrapper").appendChild(app.view);
+    let word = words[0];
+
+    
+
+
+   
+    let hitFlash = 0;        // 0 = нет эффекта, 1 = полностью красный
+    const flashSpeed = 0.05; // скорость возврата к белому
+
+    const slowmoBtn = new PIXI.Text(word.ru, { fontFamily: 'Arial', fontSize: 36, fill: 0xffffff });
+    slowmoBtn.x = app.screen.width / 2-slowmoBtn.width;
+    slowmoBtn.y = 100;
+    slowmoBtn.interactive = true;
+    slowmoBtn.buttonMode = true;
+    app.stage.addChild(slowmoBtn);
+    let options = loadWord(currentWordIndex);
+
+    let slowmo = false;
+    let timeScale = 1; // 1 = нормальная скорость, <1 = слоумо
+    let until_next_word = false
+
+    function setSlowmo(slowValue, next = false){
+        if (next){
+            until_next_word  = true;
+        }
+        console.log(slowValue)
+        slowmo = slowValue;
+        timeScale = slowmo ? 0.3 : 1; // 0.3 = 30% скорости
+    }
+
+    // slowmoBtn.on('pointerdown', () => {
+    //     // slowmo = !slowmo;
+    //     // timeScale = slowmo ? 0.3 : 1; // 0.3 = 30% скорости
+    //     // slowmoBtn.tint = slowmo ? 0x00ff00 : 0xffffff; // визуальный эффект
+    // });
+
+
+    // ==============================
+    // КНОПКА "ДОМОЙ"
+    const homeBtn = new PIXI.Text('🏠', { fontFamily: 'Arial', fontSize: 36, fill: 0xffffff });
+    homeBtn.x = 20;
+    homeBtn.y = 20;
+    homeBtn.interactive = true;
+    homeBtn.buttonMode = true;
+    homeBtn.on('pointerdown', () => {
+        window.location.href = '/chinese';
+    });
+    app.stage.addChild(homeBtn);
+
+    // ==============================
+    // ПАУЗА
+    let paused = false;
+    const pauseBtn = new PIXI.Text('⏸️', { fontFamily: 'Arial', fontSize: 36, fill: 0xffffff });
+    pauseBtn.x = app.screen.width - 50;
+    pauseBtn.y = 20;
+    pauseBtn.interactive = true;
+    pauseBtn.buttonMode = true;
+    app.stage.addChild(pauseBtn);
+
+    const pauseText = new PIXI.Text('PAUSED', { fontFamily: 'Arial', fontSize: 72, fill: 0xffffff, align: 'center' });
+    pauseText.anchor.set(0.5);
+    pauseText.x = app.screen.width / 2;
+    pauseText.y = app.screen.height / 2;
+    pauseText.visible = false;
+    app.stage.addChild(pauseText);
+    // Обработчик паузы
+    pauseBtn.on('pointerdown', () => {
+        paused = !paused;
+        pauseBtn.text = paused ? '▶️' : '⏸️';
+        pauseText.visible = paused;
+
+        // Если снята пауза и генерация была отложена — возобновляем
+        if (!paused && waitingForNextObstacle) {
+            waitingForNextObstacle = false;
+            scheduleNextObstacle();
+        }
+    });
+
+    // ==============================
+    // НАСТРОЙКИ
+    const cubeSize = 60;
+    const gravity = 0.9;
+    const jumpPower = -16;
+    const obstacleSpeed = 12;
+
+    function getGroundY() {
+        return app.screen.height / 2 + cubeSize / 2;
+    }
+
+    // ==============================
+    // КУБ
+    const cube = new PIXI.Graphics();
+    cube.lineStyle(4, 0x000000, 1);
+    cube.beginFill(0xffffff);
+    cube.drawRoundedRect(-cubeSize/2, -cubeSize/2, cubeSize, cubeSize, 12);
+    cube.endFill();
+    cube.x = 180;
+    cube.y = getGroundY();
+    cube.vy = 0;
+    cube.onGround = true;
+    app.stage.addChild(cube);
+
+    // ==============================
+    // СЛЕД (Trail)
+    const trail = new PIXI.Graphics();
+    app.stage.addChildAt(trail, 0);
+    let trailHistory = [];
+    const maxTrail = 40;
+
+    // ==============================
+    // ПРЫЖОК
+    function jump() {
+        if (cube.onGround) {
+            cube.vy = jumpPower;
+            cube.onGround = false;
+        }
+    }
+    app.stage.eventMode = 'static';
+    app.stage.hitArea = app.screen;
+    // app.stage.on("pointerdown", jump);
+
+    // ==============================
+    // ПРЕПЯТСТВИЯ
+    const obstacles = [];
+    function createObstacle() {
+        if (paused) return;
+
+        const size = 50;
+        const tri = new PIXI.Graphics();
+        tri.beginFill(0xff4d4d);
+        tri.moveTo(0, 0);
+        tri.lineTo(size, 0);
+        tri.lineTo(size/2, -size);
+        tri.closePath();
+        tri.endFill();
+
+        tri.x = app.screen.width + 50;
+        tri.y = getGroundY() + cubeSize/2;
+        tri.size = size;
+
+        app.stage.addChild(tri);
+        obstacles.push(tri);
+    }
+
+    // ==============================
+    // Генерация с контролем количества
+    let waitingForNextObstacle = false;
+
+    function scheduleNextObstacle() {
+        if (paused) {
+            waitingForNextObstacle = true;
+            return;
+        }
+
+        setTimeout(() => {
+            if (!paused && obstacles.length === 0) {
+                createObstacle();
+            }
+            scheduleNextObstacle(); // рекурсивно планируем следующий
+        }, 2000);
+    }
+
+    // Запуск планировщика
+    scheduleNextObstacle();
+
+    // ==============================
+    // ГЛАВНЫЙ ЦИКЛ
+    app.ticker.add((delta) => {
+        if (paused) return;
+
+
+        const dt = delta * timeScale; // корректируем скорость на слоумо
+
+        // === ЭФФЕКТ УДАРА ===
+        if (hitFlash > 0) {
+            hitFlash -= flashSpeed * dt;
+            if (hitFlash < 0) hitFlash = 0;
+
+            // Интерполяция цвета от красного к белому
+            const r = 255;
+            const g = Math.floor(255 * (1 - hitFlash));
+            const b = Math.floor(255 * (1 - hitFlash));
+
+            const color = (r << 16) | (g << 8) | b;
+            cube.tint = color;
+        } else {
+            cube.tint = 0xffffff;
+        }
+
+        
+        // Гравитация и прыжок
+        cube.vy += gravity * dt;
+        cube.y += cube.vy * dt;
+
+        if (cube.y >= getGroundY()) {
+            cube.y = getGroundY();
+            cube.vy = 0;
+            cube.onGround = true;
+            cube.rotation = Math.round(cube.rotation / (Math.PI/2)) * (Math.PI/2);
+        } else {
+            cube.rotation += 0.15 * dt;
+        }
+
+        // След
+        trailHistory.unshift({ x: cube.x, y: cube.y });
+        if (trailHistory.length > maxTrail) trailHistory.pop();
+
+        trail.clear();
+        for (let i = 0; i < trailHistory.length; i++) {
+            const p = trailHistory[i];
+            if (i > 0) {
+                p.x -= obstacleSpeed;
+                const prev = trailHistory[i - 1];
+                const ratio = 1 - (i / trailHistory.length);
+                const lineWidth = (cubeSize * 0.5) * ratio * (0.8 + Math.random() * 0.4);
+                const alpha = 0.4 * ratio * (0.8 + Math.random() * 0.4);
+                trail.lineStyle(lineWidth, 0xffffff, alpha);
+                trail.moveTo(p.x, p.y);
+                trail.lineTo(prev.x, prev.y);
+            }
+        }
+
+        // Препятствия
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+            const o = obstacles[i];
+            o.x -= obstacleSpeed*dt;
+
+            if (o.x < -100) {
+                app.stage.removeChild(o);
+                obstacles.splice(i, 1);
+                obstacleAnswered = false; 
+                continue;
+            }
+
+
+            const obstacleCenterX = o.x + o.size / 2;
+            const obstacleCenterY = o.y - o.size / 2;
+            // Игнорируем если препятствие позади куба
+            if (obstacleCenterX < cube.x) {
+                return;
+            }
+
+            const dx = cube.x - (o.x + o.size/2);
+            const dy = cube.y - (o.y - o.size/2);
+            const distance = Math.sqrt(dx*dx + dy*dy);
+            
+            console.log(slowmo, until_next_word);
+        
+            // Пока мы на этом расстоянии еще можно дать правильный ответ
+            if (distance <= 600 && !slowmo && !obstacleAnswered) {
+            
+                setSlowmo(true);
+                createOptionButtons(options);
+            
+            }
+
+            if (distance <= 150 ){
+                //  Уже поздно давать правильный ответ терям балы
+                setSlowmo(false);
+                if (answerWasCorrect) {
+                    jump();
+                }
+
+                answerWasCorrect = false; // сброс
+            
+            }
+
+        
+
+
+            if (distance < cubeSize * 0.7) {
+                hitFlash = 1;
+                //alert("lose");
+            // location.reload();
+            }
+        }
+    });
+
+    // ==============================
+    // Resize
+    window.addEventListener("resize", () => {
+        app.renderer.resize(window.innerWidth, window.innerHeight);
+        pauseBtn.x = app.screen.width - 50;
+        pauseText.x = app.screen.width / 2;
+        pauseText.y = app.screen.height / 2;
+        homeBtn.x = 20;
+        homeBtn.y = 20;
+    });
+
+}
+</script>
+</body>
+</html>
