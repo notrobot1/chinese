@@ -14,15 +14,23 @@
             display: block;
             width: 100vw;
             height: 100vh;
-            border: 1px solid #333;
         }
     </style>
 </head>
 <body>
-<div id="canvas-wrapper" style="width: 100%; height: 100vh; overflow: hidden;"></div>
+<div id="canvas-wrapper"></div>
 
 <script src="./pixi.min.js"></script>
 <script>
+
+
+function setRealViewportHeight() {
+    const vh = window.innerHeight;
+    document.getElementById("canvas-wrapper").style.height = vh + "px";
+}
+
+setRealViewportHeight();
+window.addEventListener("resize", setRealViewportHeight);
 
 let words = [];
 fetch("https://notrobot1.github.io/chinese/game/1/word.json")
