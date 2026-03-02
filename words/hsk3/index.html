@@ -238,6 +238,11 @@
         currentWords = currentWords.filter(w => w.hanzi !== word.hanzi);
 
         if (currentWords.length === 0) {
+          // если было 3+ ошибки — заканчиваем игру
+          if (roundErrors >= 3) {
+            end();
+            return;
+          }
           remainingWords.length === 0 ? finishGame() : loadNextRound();
         }
       } else {
@@ -245,10 +250,7 @@
         addScore(selectedRu.word, -10);
         addScore(word, -10);
         roundErrors++;
-         if (roundErrors >= 3) {
-          end(); // ⛔ завершаем игру
-          return;
-        }
+        
         selectedRu.btn.classList.remove("selected");
       }
 
