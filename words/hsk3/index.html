@@ -257,7 +257,8 @@
 
     function loadNextRound() {
       const count = Math.min(5, remainingWords.length);
-      currentWords = shuffle(remainingWords).slice(0, count);
+      currentWords = remainingWords.slice(0, count);
+      //currentWords = shuffle(remainingWords).slice(0, count);
       remainingWords = remainingWords.filter(w => !currentWords.includes(w));
       roundErrors = 0; // сброс ошибок раунда 
       renderPair();
