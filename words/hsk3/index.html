@@ -119,6 +119,7 @@
   <script>
 
     const WORDS_STORAGE_KEY = "hsk3WordsProgress";
+    let roundErrors = 0;
     let words = [];
     let remainingWords = [];
     let currentWords = [];
@@ -243,6 +244,11 @@
         // ❌ ошибка
         addScore(selectedRu.word, -10);
         addScore(word, -10);
+        roundErrors++;
+         if (roundErrors >= 3) {
+          end(); // ⛔ завершаем игру
+          return;
+        }
         selectedRu.btn.classList.remove("selected");
       }
 
@@ -253,6 +259,7 @@
       const count = Math.min(5, remainingWords.length);
       currentWords = shuffle(remainingWords).slice(0, count);
       remainingWords = remainingWords.filter(w => !currentWords.includes(w));
+      roundErrors = 0; // сброс ошибок раунда 
       renderPair();
     }
 
