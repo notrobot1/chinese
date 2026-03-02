@@ -117,6 +117,8 @@
   </div>
 
   <script>
+
+    const WORDS_STORAGE_KEY = "hsk3WordsProgress";
     let words = [];
     let remainingWords = [];
     let currentWords = [];
@@ -256,6 +258,8 @@
 
     function finishGame() {
       const time = ((Date.now() - startTime) / 1000).toFixed(1);
+      // очищаем прогресс
+      localStorage.removeItem(WORDS_STORAGE_KEY);
       document.getElementById("game-board").classList.add("hidden");
       document.getElementById("result").classList.remove("hidden");
       document.getElementById("controls").classList.remove("hidden");
@@ -263,8 +267,23 @@
         `Готово! Вы справились за ${time} секунд.`;
     }
 
+    function end() {
+      const time = ((Date.now() - startTime) / 1000).toFixed(1);
+      document.getElementById("game-board").classList.add("hidden");
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("controls").classList.remove("hidden");
+      document.getElementById("result").textContent =
+        `На сегодня все!`;
+    }
+
     function startGame() {
-      remainingWords = shuffle([...words]);
+      // если нет сохранённого прогресса — создаём
+      if (!localStorage.getItem(WORDS_STORAGE_KEY)) {
+        remainingWords = shuffle([...words]);
+        localStorage.setItem(WORDS_STORAGE_KEY, JSON.stringify(remainingWords));
+      } else {
+        remainingWords = JSON.parse(localStorage.getItem(WORDS_STORAGE_KEY));
+      }
       startTime = Date.now();
       document.getElementById("game-board").classList.remove("hidden");
       document.getElementById("result").classList.add("hidden");
