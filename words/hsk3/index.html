@@ -97,6 +97,24 @@
       </label>
     </div>
 
+    <div class="w-full mt-2 mb-2">
+      <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+    
+        <!-- текущий прогресс -->
+        <div id="progress-current"
+             class="absolute left-0 top-0 h-3 bg-blue-500"
+             style="width:0%">
+        </div>
+    
+        <!-- рекорд -->
+        <div id="progress-record"
+             class="absolute top-0 h-3 w-1 bg-red-500"
+             style="left:0%">
+        </div>
+    
+      </div>
+    </div>
+
     <div id="game-board" class="grid grid-cols-2 gap-4 flex-grow overflow-hidden">
       <div id="rus" class="flex flex-col gap-2 overflow-auto"></div>
       <div id="hanzi" class="flex flex-col gap-2 overflow-auto"></div>
@@ -119,6 +137,9 @@
   <script>
 
     const WORDS_STORAGE_KEY = "hsk3WordsProgress";
+    const RECORD_KEY = "hsk3Record";
+    let totalWords = 0;
+    let recordProgress = 0;
     let roundErrors = 0;
     let words = [];
     let remainingWords = [];
@@ -131,6 +152,28 @@
 
     const SCORE_KEY = "wordScores";
 
+    function updateProgress() {
+  
+    const done = totalWords - remainingWords.length - currentWords.length;
+    const percent = (done / totalWords) * 100;
+  
+    document.getElementById("progress-current").style.width = percent + "%";
+  }
+
+  function loadRecord() {
+    recordProgress = parseInt(localStorage.getItem(RECORD_KEY) || "0");
+    const percent = (recordProgress / totalWords) * 100;
+    document.getElementById("progress-record").style.left = percent + "%";
+  }
+    function saveRecord() {
+      const done = totalWords - remainingWords.length;
+    
+      if (done > recordProgress) {
+        localStorage.setItem(RECORD_KEY, done);
+      }
+    }
+
+    
     function loadScores() {
       return JSON.parse(localStorage.getItem(SCORE_KEY) || "{}");
     }
@@ -236,7 +279,7 @@
         selectedRu.btn.classList.remove("selected");
 
         currentWords = currentWords.filter(w => w.hanzi !== word.hanzi);
-
+        updateProgress();
         if (currentWords.length === 0) {
           // если было 3+ ошибки — заканчиваем игру
           if (roundErrors >= 3) {
@@ -267,7 +310,10 @@
     }
 
     function finishGame() {
+      saveRecord();
       const time = ((Date.now() - startTime) / 1000).toFixed(1);
+      // удаляем сохранённый прогресс
+      localStorage.removeItem(WORDS_STORAGE_KEY);
       // очищаем прогресс
       localStorage.removeItem(WORDS_STORAGE_KEY);
       document.getElementById("game-board").classList.add("hidden");
@@ -278,6 +324,7 @@
     }
 
     function end() {
+      saveRecord();
       const time = ((Date.now() - startTime) / 1000).toFixed(1);
       document.getElementById("game-board").classList.add("hidden");
       document.getElementById("result").classList.remove("hidden");
@@ -287,6 +334,9 @@
     }
 
     function startGame() {
+      totalWords = words.length;
+      loadRecord();
+      updateProgress();
       // если нет сохранённого прогресса — создаём
       if (!localStorage.getItem(WORDS_STORAGE_KEY)) {
         remainingWords = shuffle([...words]);
