@@ -343,6 +343,21 @@
         localStorage.setItem(WORDS_STORAGE_KEY, JSON.stringify(remainingWords));
       } else {
         remainingWords = JSON.parse(localStorage.getItem(WORDS_STORAGE_KEY));
+        let hsk3Record = Number(localStorage.getItem(RECORD_KEY)) || 0;
+
+        // 1. делим на 2 массива
+        let firstPart = remainingWords.slice(0, hsk3Record);
+        let secondPart = remainingWords.slice(hsk3Record);
+
+        // 2. перемешиваем первый (Fisher-Yates)
+        for (let i = firstPart.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [firstPart[i], firstPart[j]] = [firstPart[j], firstPart[i]];
+        }
+
+        // 3. соединяем
+        remainingWords = [...firstPart, ...secondPart];
+
       }
       startTime = Date.now();
       document.getElementById("game-board").classList.remove("hidden");
@@ -362,7 +377,7 @@
       .catch(() => {
         document.getElementById("game").innerHTML =
           "<p class='text-red-500 text-center'>Ошибка загрузки слов</p>";
-      });
+    });
   </script>
 
     <!-- 📊 Google Analytics -->
