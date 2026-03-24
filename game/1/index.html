@@ -21,7 +21,7 @@
 <body>
 <div id="canvas-wrapper"></div>
 
-<script src="pixi.min.js"></script>
+<script src="./pixi.min.js"></script>
 <script>
 // Глобальные переменные приложения
 let words = [];
@@ -62,6 +62,7 @@ function startGame() {
     let timeScale = 1;
     let hitFlash = 0;
     const flashSpeed = 0.05;
+    let slowmoFactor = 0.3; // Базовое значение (30% скорости)
 
     // --- Адаптивные параметры (обновляются при ресайзе) ---
     const baseWidth = 800;
@@ -81,8 +82,11 @@ function startGame() {
         gravity = 0.9 * scale;
         jumpPower = -16 * scale;
         obstacleSpeed = 12 * scale;
-        triggerDistance = app.screen.width * 0.6; // Замедление на 60% ширины экрана
+        triggerDistance = app.screen.width * 0.7; // Замедление на 60% ширины экрана
         failDistance = cubeSize * 2.5;
+
+        let ratio = app.screen.width / baseWidth;
+        slowmoFactor = 0.15 + (Math.min(ratio, 1) * 0.25);
 
         // Обновляем позиции элементов
         homeBtn.scale.set(scale > 0.7 ? 1 : 0.8);
@@ -176,7 +180,8 @@ function startGame() {
 
     function setSlowmo(val) {
         slowmo = val;
-        timeScale = slowmo ? 0.3 : 1;
+        // Теперь используем динамический фактор вместо фиксированного 0.3
+        timeScale = slowmo ? slowmoFactor : 1;
     }
 
     // --- Создание объектов ---
