@@ -1,11 +1,5 @@
 [
   {
-    "hanzi": "一会儿",
-    "pinyin": "yí huìr",
-    "ru": "немного, какое-то время, немного времени",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w610/8610A_cm_f_l_o12_4.mp3"
-  },
-  {
     "hanzi": "一共",
     "pinyin": "yí gòng",
     "ru": "в общем, в целом, в совокупности",
@@ -70,12 +64,6 @@
     "pinyin": "shàng zhōu",
     "ru": "прошлая неделя",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w199/42199A_cm_f_l_o12_4.mp3"
-  },
-  {
-    "hanzi": "下",
-    "pinyin": "xià",
-    "ru": "следующий",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w541/2541A_cm_f_l_6_3.mp3"
   },
   {
     "hanzi": "下周",
@@ -196,12 +184,6 @@
     "pinyin": "dōng fāng",
     "ru": "восток, Восток, восточный",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w351/1351A_cm_f_l_o12_4.mp3"
-  },
-  {
-    "hanzi": "两",
-    "pinyin": "liǎng",
-    "ru": "два (используется вместо 'er' в некоторых случаях); оба, обе; пара, немного",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w489/2489A_cm_f_l_6_3.mp3"
   },
   {
     "hanzi": "个子",
@@ -424,12 +406,6 @@
     "pinyin": "xiū jià",
     "ru": "быть в отпуске, отдыхать на каникулах",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w885/5885A_cm_f_l_p226630_3.mp3"
-  },
-  {
-    "hanzi": "会",
-    "pinyin": "huì",
-    "ru": "мочь, уметь, знать; понимать, быть сильным в; указывает на высокую вероятность того, что что-то произойдет",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w863/863A_cm_f_m_p226630_3.mp3"
   },
   {
     "hanzi": "但",
@@ -828,12 +804,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w835/11835A_cm_f_l_p226630_3.mp3"
   },
   {
-    "hanzi": "出租车",
-    "pinyin": "chū zū chē",
-    "ru": "такси",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w118/118A_cm_f_l_u14_3.mp3"
-  },
-  {
     "hanzi": "出门",
     "pinyin": "chū mén",
     "ru": "выходить (из дома)",
@@ -856,12 +826,6 @@
     "pinyin": "fēn shù",
     "ru": "зачетный балл, оценка; (матем.) дробь",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w783/19783A_cm_f_l_p226630_4.mp3"
-  },
-  {
-    "hanzi": "分钟",
-    "pinyin": "fēn zhōng",
-    "ru": "минута",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w731/8731A_cm_f_m_p48676_3.mp3"
   },
   {
     "hanzi": "刚",
@@ -1302,12 +1266,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w310/2310A_cm_f_l_u226630-226630_3.mp3"
   },
   {
-    "hanzi": "喂",
-    "pinyin": "wèi",
-    "ru": "кормить (человека), давать пищу (животным)",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w791/13791A_cm_f_l_6_3.mp3"
-  },
-  {
     "hanzi": "喊",
     "pinyin": "hǎn",
     "ru": "кричать; отправлять за (кем-то); звать (кого-то)",
@@ -1318,12 +1276,6 @@
     "pinyin": "zuǐ",
     "ru": "рот; предмет, похожий на рот; слова, язык",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w916/3916A_cm_f_l_o12_4.mp3"
-  },
-  {
-    "hanzi": "回",
-    "pinyin": "huí",
-    "ru": "возвращаться; поворачивать, разворачивать",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w374/374A_cm_f_l_o12-32206_4.mp3"
   },
   {
     "hanzi": "回国",
@@ -1420,12 +1372,6 @@
     "pinyin": "wài dì",
     "ru": "иные края, часть страны, отличная от той, где кто-то живет, за пределами чьего-то родного города",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w15/4015A_cm_f_l_o30_3.mp3"
-  },
-  {
-    "hanzi": "多",
-    "pinyin": "duō",
-    "ru": "много, большое количество; побольше; быть намного больше (чем ожидалось)",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w129/4129A_cm_f_l_6_3.mp3"
   },
   {
     "hanzi": "多久",
@@ -1570,12 +1516,6 @@
     "pinyin": "tào",
     "ru": "набор, комплект; изгиб (реки); обыкновение, штамп; счетное слово для набора, комплекта, группы, домов",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w592/3592A_cm_f_l_6_3.mp3"
-  },
-  {
-    "hanzi": "好",
-    "pinyin": "hǎo",
-    "ru": "подходящий; хорошо; легко; ладно, ОК; (указывает на достижение результата или успешное завершение действия)",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w925/31925A_cm_f_l_6_3.mp3"
   },
   {
     "hanzi": "好久",
@@ -1728,12 +1668,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w512/32512A_cm_f_l_o12_4.mp3"
   },
   {
-    "hanzi": "对",
-    "pinyin": "duì",
-    "ru": "правильный, верный",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w766/2766A_cm_f_l_6_3.mp3"
-  },
-  {
     "hanzi": "对话",
     "pinyin": "duì huà",
     "ru": "вести диалог с, вести переговоры; диалог",
@@ -1750,12 +1684,6 @@
     "pinyin": "fēng",
     "ru": "закрывать, запечатывать",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w102/17102A_cm_f_l_6_3.mp3"
-  },
-  {
-    "hanzi": "小",
-    "pinyin": "xiǎo",
-    "ru": "маленький, небольшой; недолго, слегка; (перед числительным) почти",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w402/402A_cm_f_m_p226630_3.mp3"
   },
   {
     "hanzi": "小声",
@@ -2832,12 +2760,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w992/18992A_cm_f_l_6_3.mp3"
   },
   {
-    "hanzi": "汽车",
-    "pinyin": "qì chē",
-    "ru": "машина, автомобиль",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w445/9445A_cm_f_l_6_3.mp3"
-  },
-  {
     "hanzi": "河",
     "pinyin": "hé",
     "ru": "река; Желтая река, Хуанхэ; Млечный путь, Галактика",
@@ -2928,12 +2850,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w175/9175A_cm_f_l_O14-1226_3.mp3"
   },
   {
-    "hanzi": "漂亮",
-    "pinyin": "piào liang",
-    "ru": "красивый, прекрасный, хорошо выглядящий; замечательный, блестящий",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w780/8780A_cm_f_l_u30_3.mp3"
-  },
-  {
     "hanzi": "灯",
     "pinyin": "dēng",
     "ru": "лампа; свет; горелка",
@@ -3022,12 +2938,6 @@
     "pinyin": "tè diǎn",
     "ru": "особенность, характеристика, свойство",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w880/1880A_cm_f_l_p167233_3.mp3"
-  },
-  {
-    "hanzi": "狗",
-    "pinyin": "gǒu",
-    "ru": "собака",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w389/389A_cm_f_m_p167233_3.mp3"
   },
   {
     "hanzi": "猫",
@@ -3294,12 +3204,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w380/15380A_cm_f_l_u30_3.mp3"
   },
   {
-    "hanzi": "站",
-    "pinyin": "zhàn",
-    "ru": "стоять, вставать; останавливаться",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w599/2599A_cm_f_l_6_3.mp3"
-  },
-  {
     "hanzi": "站住",
     "pinyin": "zhàn zhù",
     "ru": "останавливаться",
@@ -3322,12 +3226,6 @@
     "pinyin": "bǐ jì běn",
     "ru": "блокнот, записная книжка; ноутбук",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w330/3330A_cm_f_l_p167233_3.mp3"
-  },
-  {
-    "hanzi": "等",
-    "pinyin": "děng",
-    "ru": "ждать",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w501/2501A_cm_f_l_o12-12_3.mp3"
   },
   {
     "hanzi": "等于",
@@ -3480,12 +3378,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w82/12082A_cm_f_l_p226630_3.mp3"
   },
   {
-    "hanzi": "老",
-    "pinyin": "lǎo",
-    "ru": "старый, престарелый; стародавний, устаревший; прежний, оригинальный; (о цвете) темный; (об овощах) переросший; (о еде) переваренный, пережаренный",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w690/1690A_cm_f_l_6_3.mp3"
-  },
-  {
     "hanzi": "老年",
     "pinyin": "lǎo nián",
     "ru": "старость, преклонный возраст",
@@ -3592,12 +3484,6 @@
     "pinyin": "jié mù",
     "ru": "программа, представление",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w982/5982A_cm_f_l_o30_3.mp3"
-  },
-  {
-    "hanzi": "花",
-    "pinyin": "huā",
-    "ru": "цветок; декоративное растение; предмет, похожий на цветок",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w510/2510A_cm_f_l_6_3.mp3"
   },
   {
     "hanzi": "花园",
@@ -4110,12 +3996,6 @@
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w778/17778A_cm_f_l_o12_4.mp3"
   },
   {
-    "hanzi": "那",
-    "pinyin": "nà",
-    "ru": "тот, те (используется вместо названия объекта, удаленного в пространстве или времени)",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w363/363A_cm_f_l_6_3.mp3"
-  },
-  {
     "hanzi": "那么",
     "pinyin": "nà me",
     "ru": "так, таким образом, в таком случае",
@@ -4402,12 +4282,6 @@
     "pinyin": "shí wù",
     "ru": "продукты питания, пища",
     "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w311/18311A_cm_f_l_p226630_4.mp3"
-  },
-  {
-    "hanzi": "饭馆",
-    "pinyin": "fàn guǎn",
-    "ru": "ресторан, закусочная",
-    "audio": "http://www.trainchinese.com/v1/word_lists/tc_words/w_dirs/w979/979A_cm_f_l_p67786_3.mp3"
   },
   {
     "hanzi": "饱",
